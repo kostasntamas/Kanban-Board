@@ -30,6 +30,16 @@ body {
 	max-height: var(--height);
 	margin-block: auto;
 	height: 100%;
+
+	input {
+		width: 100%;
+	}
+
+	.add-form {
+		display: flex;
+		gap: 0.2em;
+		padding-inline: 10px;
+	}
 }
 .wrapper h2 {
 	text-align: center;
@@ -68,11 +78,28 @@ ul .drag-item {
 	border: 1px solid gray;
 	min-height: var(--list-height);
 	padding: 20px;
+	position: relative;
 	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
 	&.dragging {
 		opacity: 0.5;
 		transform: rotate(2deg) scale(0.8);
+	}
+
+	.delete-btn {
+		position: absolute;
+		right: 0;
+		top: 0;
+		padding: 0.3em;
+		/* border-radius: 100vmax; */
+		aspect-ratio: 1 / 1;
+		line-height: 1;
+		cursor: pointer;
+		border: none;
+		&:hover {
+			background-color: rgb(255, 114, 114);
+			color: white;
+		}
 	}
 
 	&:active {

@@ -61,7 +61,15 @@ const deleteItem = (btn) => {
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify({ id: item.dataset.id }),
 	})
-		.then(() => item.remove())
+		.then(() => {
+			if (!document.startViewTransition) {
+				item.remove();
+				return;
+			}
+			document.startViewTransition(() => {
+				item.remove();
+			});
+		})
 		.catch((err) => console.error('Failed to delete:', err));
 };
 

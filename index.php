@@ -30,21 +30,21 @@ foreach ($rows as $row) {
 <body>
     <main id="drag-lists">
         <?php foreach ($columns as $colKey => $col): ?>
-        <div class="wrapper">
-            <h2><?= htmlspecialchars($col['label']) ?></h2>
-            <ul class="drag-list" data-column="<?= $colKey ?>">
-                <?php foreach ($col['items'] as $item): ?>
-                <li class="drag-item" draggable="true" data-id="<?= (int) $item['id'] ?>">
-                    <span><?= htmlspecialchars($item['content']) ?></span>
-                    <button class="delete-btn">Delete</button>
-                </li>
-                <?php endforeach; ?>
-            </ul>
-            <div class="add-form">
-                <input type="text" placeholder="New item..." data-col="<?= $colKey ?>">
-                <button class="add-btn" data-col="<?= $colKey ?>">Add</button>
+            <div class="wrapper">
+                <h2><?= htmlspecialchars($col['label']) ?></h2>
+                <div class="add-form">
+                    <input type="text" name="addnew" placeholder="New item..." data-col="<?= $colKey ?>">
+                    <button class="add-btn" data-col="<?= $colKey ?>">Add</button>
+                </div>
+                <ul class="drag-list" data-column="<?= $colKey ?>">
+                    <?php foreach ($col['items'] as $item): ?>
+                        <li class="drag-item" draggable="true" data-id="<?= (int) $item['id'] ?>">
+                            <span><?= htmlspecialchars($item['content']) ?></span>
+                            <button class="delete-btn" title="delete">x</button>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
             </div>
-        </div>
         <?php endforeach; ?>
     </main>
 </body>
