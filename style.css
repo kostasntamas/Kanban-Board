@@ -16,7 +16,7 @@ body {
 	display: grid;
 }
 
-main {
+#drag-lists {
 	display: grid;
 	gap: 2rem;
 	grid-auto-columns: calc((100% / 4) - 2rem);
@@ -35,7 +35,7 @@ main {
 	text-align: center;
 	padding-block: 1em;
 }
-ul {
+.drag-list {
 	list-style: none;
 	border-top: 1px solid black;
 	height: 100%;
@@ -45,15 +45,37 @@ ul {
 	gap: 1rem;
 	padding: 20px 10px;
 	scrollbar-gutter: stable;
+	border: 2px dashed transparent;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-ul:has(li:nth-child(4)) {
+.drag-list.drop {
+	border: 2px dashed black;
+}
+
+.drag-list.drop .drag-item {
+	pointer-events: none;
+}
+
+ul:has(.drag-item:nth-child(5)) {
 	overflow: auto;
 	padding: 20px 5px 20px 10px;
 }
 
-ul li {
+ul .drag-item {
+	cursor: grab;
+	user-select: none;
 	border: 1px solid gray;
 	min-height: var(--list-height);
 	padding: 20px;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+	&.dragging {
+		opacity: 0.5;
+		transform: rotate(2deg) scale(0.8);
+	}
+
+	&:active {
+		cursor: grabbing;
+	}
 }
