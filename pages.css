@@ -21,7 +21,7 @@ body {
 	font-size: 1rem;
 	color: #111;
 	text-decoration: none;
-	margin-right: auto;
+	/* margin-right: auto; */
 }
 
 .top-nav-user {
@@ -30,6 +30,19 @@ body {
 	gap: 0.5rem;
 	font-size: 0.88rem;
 	color: #555;
+}
+a.logout {
+	position: relative;
+}
+a.logout::after {
+    content: '';
+    width: 2px;
+    height: 100%;
+    left: -1px;
+    background: #00000033;
+    position: absolute;
+    top: 50%;
+    translate: -50% -50%;
 }
 
 .top-nav-avatar {
@@ -54,6 +67,11 @@ body {
 	transition:
 		background 0.15s,
 		color 0.15s;
+
+		&[aria-current="page"] {
+			text-decoration: underline;
+			font-weight: bolder;
+		}
 }
 .top-nav a:hover {
 	background: #f5f5f5;
@@ -65,8 +83,8 @@ body {
 .page-title {
 	font-size: 1.3rem;
 	font-weight: 700;
-	color: white;
-	margin-bottom: 1.5rem;
+	color: #111;
+	    text-shadow: 2px 2px 0 #fff, -2px 2px 0 #fff, -2px -2px 0 #fff, 2px -2px 0 #fff;
 }
 
 /* ── Card ─────────────────────────────────────────────────────────────────────── */
@@ -262,6 +280,11 @@ body {
 	width: fit-content;
 	background: #1a1a1a;
 	color: white;
+}
+.role-badge.member {
+	width: fit-content;
+	background: lightblue;
+	color: black;
 }
 
 .workspace-actions {

@@ -112,7 +112,7 @@ const initQuill = () => {
 			toolbar: [
 				['bold', 'italic', 'underline', 'strike'],
 				['blockquote', 'code-block'],
-				[{ list: 'ordered' }, { list: 'bullet' }],
+				[{ list: 'ordered' }, { list: 'bullet' }, { list: 'check' }],
 				['link'],
 				['clean'],
 			],
@@ -524,7 +524,7 @@ const deleteColumn = (wrapper) => {
 
 const addColumnToDOM = (key, label) => {
 	const wrapper = document.createElement('div');
-	wrapper.className = 'container';
+	wrapper.className = 'container shadow';
 	wrapper.dataset.colKey = key;
 
 	const colHeader = document.createElement('div');

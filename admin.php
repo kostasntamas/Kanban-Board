@@ -63,24 +63,27 @@ $users = $pdo->query("SELECT id, name, email, is_admin, created_at FROM users OR
 
     <nav class="top-nav">
         <a href="index.php" class="top-nav-brand">Kanban Board</a>
-        <a href="workspaces.php">Workspaces</a>
+        <a href="workspaces.php" <?= $me['is_admin'] ? '' : 'style="margin-right: auto;"' ?>>Workspaces</a>
+        <?php if ($me['is_admin']): ?>
+            <a href="admin.php" aria-current="page" style="margin-right: auto;">Admin</a>
+        <?php endif; ?>
         <div class="top-nav-user">
             <span class="top-nav-avatar" style="background:<?= avatarColor($me['id']) ?>">
                 <?= htmlspecialchars(initials($me['name'])) ?>
             </span>
             <?= htmlspecialchars($me['name']) ?>
         </div>
-        <a href="logout.php">Sign out</a>
+        <a href="logout.php" class="logout">Sign out</a>
     </nav>
 
-    <div class="page-content">
+    <div class="page-content flow">
         <h1 class="page-title">User Management</h1>
 
         <?php if ($error):   ?><div class="flash-err"><?= htmlspecialchars($error) ?></div><?php endif; ?>
         <?php if ($success): ?><div class="flash-ok"><?= htmlspecialchars($success) ?></div><?php endif; ?>
 
         <!-- Create user form -->
-        <div class="card" style="margin-bottom:2rem">
+        <div class="card">
             <p class="card-title">Add User</p>
             <form method="POST">
                 <input type="hidden" name="action" value="create_user">

@@ -137,11 +137,21 @@ foreach ($workspaces as $ws) {
 </head>
 
 <body class="page-body">
-
+    <!-- New-Workspace dialog -->
+    <dialog id="newWsForm" class="card">
+        <p class="card-title" style="font-size:0.95rem">Create workspace</p>
+        <form method="POST" style="display:flex;gap:0.5rem">
+            <input type="hidden" name="action" value="create">
+            <input class="form-input" type="text" name="ws_name" placeholder="Workspace name…"
+                maxlength="80" autocomplete="off" required style="flex:1">
+            <button class="btn-primary" type="submit">Create</button>
+        </form>
+    </dialog>
     <nav class="top-nav">
-        <a href="workspaces.php" class="top-nav-brand">Kanban Board</a>
+        <a href="index.php" class="top-nav-brand">Kanban Board</a>
+        <a href="workspaces.php" <?= $me['is_admin'] ? '' : 'style="margin-right: auto;"' ?> aria-current="page">Workspaces</a>
         <?php if ($me['is_admin']): ?>
-            <a href="admin.php">Admin</a>
+            <a href="admin.php" style="margin-right: auto;">Admin</a>
         <?php endif; ?>
         <div class="top-nav-user">
             <span class="top-nav-avatar"
@@ -150,27 +160,16 @@ foreach ($workspaces as $ws) {
             </span>
             <?= htmlspecialchars($me['name']) ?>
         </div>
-        <a href="logout.php">Sign out</a>
+        <a href="logout.php" class="logout">Sign out</a>
     </nav>
 
-    <div class="page-content wrapper">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;">
-            <h1 class="page-title" style="margin:0;color:black;">Workspaces</h1>
-            <button class="btn-primary btn-sm" onclick="document.getElementById('new-ws-form').classList.toggle('hidden')">
+    <div class="page-content wrapper flow">
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+            <h1 class="page-title">Workspaces</h1>
+            <button class="btn-primary btn-sm" onclick="newWsForm.showModal()">
                 + New workspace
             </button>
         </div>
-
-        <div id="new-ws-form" class="card hidden" style="margin-bottom:1.5rem;max-width:360px">
-            <p class="card-title" style="font-size:0.95rem">Create workspace</p>
-            <form method="POST" style="display:flex;gap:0.5rem">
-                <input type="hidden" name="action" value="create">
-                <input class="form-input" type="text" name="ws_name" placeholder="Workspace name…"
-                    maxlength="80" autocomplete="off" required style="flex:1">
-                <button class="btn-primary" type="submit">Create</button>
-            </form>
-        </div>
-
         <?php if (empty($workspaces)): ?>
             <p style="color:#aaa;text-align:center;margin-top:3rem">
                 You're not a member of any workspace yet.
@@ -183,7 +182,7 @@ foreach ($workspaces as $ws) {
                             <div class="workspace-name"><?= htmlspecialchars($ws['name']) ?></div>
                             <div class="workspace-meta">
                                 <span><?= $ws['member_count'] ?> member<?= $ws['member_count'] !== '1' ? 's' : '' ?></span>
-                                <span class="role-badge <?= $ws['role'] === 'owner' ? 'owner' : '' ?>">
+                                <span class="role-badge <?= $ws['role'] === 'owner' ? 'owner' : 'member' ?>">
                                     <?= $ws['role'] ?>
                                 </span>
                             </div>
@@ -245,10 +244,6 @@ foreach ($workspaces as $ws) {
             </div>
         <?php endif; ?>
     </div>
-
-    <script>
-        document.getElementById('new-ws-form').classList.add('hidden');
-    </script>
 </body>
 
 </html>

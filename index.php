@@ -54,6 +54,7 @@ $dragIconSvg   = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
     <link rel="stylesheet" href="style.css">
 
     <script src="https://cdn.quilljs.com/1.3.7/quill.min.js" defer></script>
+    <script src="script.js" defer></script>
     <title><?= htmlspecialchars($wsName) ?> — Kanban</title>
 </head>
 
@@ -132,7 +133,7 @@ $dragIconSvg   = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
                     </svg>
                 </a>
             <?php endif; ?>
-            <a href="logout.php" class="sidebar-nav-btn" title="Sign out">
+            <a href="logout.php" class="sidebar-nav-btn logout" title="Sign out">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                     <polyline points="16 17 21 12 16 7" />
@@ -182,7 +183,5 @@ $dragIconSvg   = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
         <?php endforeach; ?>
     </main>
 </body>
-
-<script src="script.js" defer></script>
 
 </html>
