@@ -1,49 +1,99 @@
 <?php
-require 'db.php'; // connects to 'kanbanboard' database
+require 'db.php';
+if (session_status() === PHP_SESSION_NONE) session_start();
 
-$pdo->exec("CREATE TABLE IF NOT EXISTS todo_items (
-    id       INT AUTO_INCREMENT PRIMARY KEY,
-    content  TEXT        NOT NULL,
-    col      VARCHAR(50) NOT NULL DEFAULT 'todo',
-    position INT         NOT NULL DEFAULT 0
-)");
-
-$count = (int) $pdo->query("SELECT COUNT(*) FROM todo_items")->fetchColumn();
-if ($count > 0) {
-    die("Table already has data — skipping seed. Delete rows first if you want to re-seed.");
+$userCount = (int) $pdo->query("SELECT COUNT(*) FROM users")->fetchColumn();
+if ($userCount > 0) {
+    header('Location: login.php'); exit;
 }
 
-$items = [
-    [1,  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam. Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "todo", 0],
-    [2,  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "todo", 1],
-    [3,  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "todo", 2],
-    [4,  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam. Lorem ipsum doab perferendis dolorum quibusdam.", "todo", 3],
-    [5,  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "todo", 4],
-    [6,  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "todo", 5],
-    [7,  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "todo", 6],
-    [8,  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "todo", 7],
-    [9,  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "todo", 8],
-    [10, "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "in_progress", 0],
-    [11, "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "in_progress", 1],
-    [12, "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "done", 0],
-    [13, "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "done", 1],
-    [14, "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "backlog", 0],
-    [15, "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "backlog", 1],
-    [16, "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "backlog", 2],
-    [17, "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "backlog", 3],
-    [18, "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "backlog", 4],
-    [19, "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "backlog", 5],
-    [20, "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "others", 0],
-    [21, "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "others", 1],
-    [22, "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "others", 2],
-    [23, "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "others", 3],
-    [24, "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "others", 4],
-    [25, "Lorem ipsum dolor sit amet consectetur adipisicing elit. Fuga libero at, ab perferendis dolorum quibusdam.", "others", 5],
-];
+$error = '';
 
-$stmt = $pdo->prepare("INSERT INTO todo_items (id, content, col, position) VALUES (?, ?, ?, ?)");
-foreach ($items as $row) {
-    $stmt->execute($row);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name     = trim($_POST['name'] ?? '');
+    $email    = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $confirm  = $_POST['confirm'] ?? '';
+
+    if (!$name || !$email || !$password) {
+        $error = 'All fields are required.';
+    } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $error = 'Invalid email address.';
+    } elseif (strlen($password) < 6) {
+        $error = 'Password must be at least 6 characters.';
+    } elseif ($password !== $confirm) {
+        $error = 'Passwords do not match.';
+    } else {
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $pdo->prepare("INSERT INTO users (name, email, password_hash, is_admin) VALUES (?, ?, ?, 1)")
+            ->execute([$name, $email, $hash]);
+        $userId = (int) $pdo->lastInsertId();
+
+        $pdo->prepare("INSERT INTO workspaces (name, owner_id) VALUES ('Default', ?)")
+            ->execute([$userId]);
+        $wsId = (int) $pdo->lastInsertId();
+
+        $pdo->prepare("INSERT INTO workspace_members (workspace_id, user_id, role) VALUES (?, ?, 'owner')")
+            ->execute([$wsId, $userId]);
+
+        // Migrate any pre-existing orphaned columns/items to the default workspace
+        $pdo->prepare("UPDATE kanban_columns SET workspace_id = ? WHERE workspace_id IS NULL")
+            ->execute([$wsId]);
+        $pdo->prepare("UPDATE todo_items SET workspace_id = ? WHERE workspace_id IS NULL")
+            ->execute([$wsId]);
+
+        $_SESSION['user_id']      = $userId;
+        $_SESSION['workspace_id'] = $wsId;
+        header('Location: index.php'); exit;
+    }
 }
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="pages.css">
+    <title>Setup — Kanban</title>
+</head>
+<body class="page-body">
+<div class="auth-wrap">
+    <div class="auth-card">
+        <p class="auth-logo">Kanban Board</p>
+        <p class="auth-subtitle">Create your admin account to get started</p>
 
-echo "Setup complete! 25 items inserted. You can delete this file now.";
+        <?php if ($error): ?>
+            <div class="form-error"><?= htmlspecialchars($error) ?></div>
+        <?php endif; ?>
+
+        <form method="POST">
+            <div class="form-group">
+                <label class="form-label" for="name">Your name</label>
+                <input class="form-input" type="text" id="name" name="name"
+                       value="<?= htmlspecialchars($_POST['name'] ?? '') ?>"
+                       autocomplete="name" autofocus required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                <input class="form-input" type="email" id="email" name="email"
+                       value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
+                       autocomplete="email" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="password">Password</label>
+                <input class="form-input" type="password" id="password" name="password"
+                       autocomplete="new-password" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="confirm">Confirm password</label>
+                <input class="form-input" type="password" id="confirm" name="confirm"
+                       autocomplete="new-password" required>
+            </div>
+            <button class="btn-primary" type="submit" style="width:100%;margin-top:0.5rem">
+                Create admin account
+            </button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
