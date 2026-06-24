@@ -36,13 +36,15 @@ body {
 		'Segoe UI',
 		sans-serif;
 	display: grid;
-	grid-template-columns: 1fr;
-	background-image: radial-gradient(rgba(0, 0, 0, 0.25) 1px, transparent 0);
-	background-size: 12px 12px;
-	background-position: -15px -15px;
+	grid-template-rows: auto 1fr;
+	background-image: radial-gradient(rgba(0, 0, 0, 0.35) 0.7px, transparent 0);
+	background-size: 15px 15px;
+	background-position: -20px -20px;
 	&:has(aside#sidebar) {
 		grid-template-columns: auto 1fr;
-		
+		grid-template-rows: auto 1fr;
+		grid-template-areas: 'aside header header' 'aside main main' 'aside main main';
+		/* grid-template-columns: auto 1fr; */
 	}
 }
 
@@ -62,24 +64,25 @@ dialog::backdrop {
 	background: rgba(0, 0, 0, 0.5);
 }
 
-dialog, ::backdrop {
-  transition: 
-    display .5s allow-discrete, 
-    overlay .5s allow-discrete, 
-    opacity .5s;
-  opacity: 0;
+dialog,
+::backdrop {
+	transition:
+		display 0.5s allow-discrete,
+		overlay 0.5s allow-discrete,
+		opacity 0.5s;
+	opacity: 0;
 }
 
 /* On Stage */
 [open],
 [open]::backdrop {
-  opacity: 1;
+	opacity: 1;
 }
 
 /* Off Stage */
 @starting-style {
-  [open],
-  [open]::backdrop {
-    opacity: 0;
-  }
+	[open],
+	[open]::backdrop {
+		opacity: 0;
+	}
 }

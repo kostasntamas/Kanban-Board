@@ -39,6 +39,34 @@ foreach ($rows->fetchAll(PDO::FETCH_ASSOC) as $row) {
     }
 }
 
+
+$stmt = $pdo->prepare("
+    SELECT w.id, w.name, wm.role,
+           (SELECT COUNT(*) FROM workspace_members WHERE workspace_id = w.id) AS member_count
+    FROM workspaces w
+    JOIN workspace_members wm ON wm.workspace_id = w.id AND wm.user_id = ?
+    ORDER BY w.created_at ASC
+");
+$stmt->execute([$me['id']]);
+$workspaces = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Members per workspace (for owners)
+$membersByWs = [];
+foreach ($workspaces as $ws) {
+    if ($ws['role'] === 'owner' || $me['is_admin']) {
+        $stmt = $pdo->prepare("
+            SELECT u.id, u.name, u.email, wm.role
+            FROM workspace_members wm
+            JOIN users u ON u.id = wm.user_id
+            WHERE wm.workspace_id = ?
+            ORDER BY wm.role DESC, u.name ASC
+        ");
+        $stmt->execute([$ws['id']]);
+        $membersByWs[$ws['id']] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
+
+
 $editIconSvg   = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M3 21v-4.25L16.2 3.575q.3-.275.663-.425t.762-.15t.775.15t.65.45L20.425 5q.3.275.438.65T21 6.4q0 .4-.137.763t-.438.662L7.25 21zM17.6 7.8L19 6.4L17.6 5l-1.4 1.4z"/></svg>';
 $deleteIconSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"/></svg>';
 $dragIconSvg   = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M9 20q-.825 0-1.412-.587T7 18t.588-1.412T9 16t1.413.588T11 18t-.587 1.413T9 20m6 0q-.825 0-1.412-.587T13 18t.588-1.412T15 16t1.413.588T17 18t-.587 1.413T15 20m-6-6q-.825 0-1.412-.587T7 12t.588-1.412T9 10t1.413.588T11 12t-.587 1.413T9 14m6 0q-.825 0-1.412-.587T13 12t.588-1.412T15 10t1.413.588T17 12t-.587 1.413T15 14M9 8q-.825 0-1.412-.587T7 6t.588-1.412T9 4t1.413.588T11 6t-.587 1.413T9 8m6 0q-.825 0-1.412-.587T13 6t.588-1.412T15 4t1.413.588T17 6t-.587 1.413T15 8"/></svg>';
@@ -133,16 +161,18 @@ $dragIconSvg   = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
                     </svg>
                 </a>
             <?php endif; ?>
-            <a href="logout.php" class="sidebar-nav-btn logout" title="Sign out">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                    <polyline points="16 17 21 12 16 7" />
-                    <line x1="21" y1="12" x2="9" y2="12" />
-                </svg>
-            </a>
+            <div class="logout-wrapper">
+                <a href="logout.php" class="sidebar-nav-btn logout" title="Sign out">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                </a>
+            </div>
         </nav>
     </aside>
-
+    <header id="workspace-header">Workspace: <?= htmlspecialchars($wsName) ?></header>
     <main id="drag-lists">
         <?php foreach ($columns as $colKey => $col): ?>
             <div class="container shadow" data-col-key="<?= htmlspecialchars($colKey) ?>">
