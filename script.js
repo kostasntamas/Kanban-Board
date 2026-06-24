@@ -55,7 +55,10 @@ const deleteItem = (btn) => {
 		body: JSON.stringify({ id: item.dataset.id }),
 	})
 		.then(() => {
-			if (!document.startViewTransition) { item.remove(); return; }
+			if (!document.startViewTransition) {
+				item.remove();
+				return;
+			}
 			document.startViewTransition(() => item.remove());
 		})
 		.catch((err) => console.error('deleteItem failed:', err));
@@ -64,18 +67,23 @@ const deleteItem = (btn) => {
 // ── Auth redirect on 401 ─────────────────────────────────────────────────────
 
 const apiFetch = (...args) =>
-    fetch(...args).then((r) => { if (r.status === 401) { location.href = 'login.php'; } return r; });
+	fetch(...args).then((r) => {
+		if (r.status === 401) {
+			location.href = 'login.php';
+		}
+		return r;
+	});
 
 // ── Item dialog state ─────────────────────────────────────────────────────────
 
-let quill               = null;
-let modalMode           = null; // 'add' | 'edit'
-let modalCol            = null;
-let modalColLabel       = null;
-let modalItemId         = null;
-let pendingFiles        = []; // { file, previewUrl }
+let quill = null;
+let modalMode = null; // 'add' | 'edit'
+let modalCol = null;
+let modalColLabel = null;
+let modalItemId = null;
+let pendingFiles = []; // { file, previewUrl }
 let existingAttachments = [];
-let workspaceMembers    = []; // populated once on first modal open
+let workspaceMembers = []; // populated once on first modal open
 
 // ── Quill (lazy init) ─────────────────────────────────────────────────────────
 
@@ -83,13 +91,13 @@ const assignSelect = document.getElementById('assign-select');
 
 const loadWorkspaceMembers = async () => {
 	if (workspaceMembers.length > 0) return;
-	const r    = await apiFetch('get_workspace_members.php');
+	const r = await apiFetch('get_workspace_members.php');
 	const data = await r.json();
 	workspaceMembers = data;
 	assignSelect.innerHTML = '<option value="">Unassigned</option>';
 	data.forEach((m) => {
 		const opt = document.createElement('option');
-		opt.value       = m.id;
+		opt.value = m.id;
 		opt.textContent = m.name;
 		assignSelect.appendChild(opt);
 	});
@@ -119,13 +127,13 @@ const modalTitle = document.getElementById('modal-title');
 
 const openModal = async (mode, col, colLabel, itemId = null) => {
 	initQuill();
-	modalMode           = mode;
-	modalCol            = col;
-	modalColLabel       = colLabel;
-	modalItemId         = itemId;
-	pendingFiles        = [];
+	modalMode = mode;
+	modalCol = col;
+	modalColLabel = colLabel;
+	modalItemId = itemId;
+	pendingFiles = [];
 	existingAttachments = [];
-	assignSelect.value  = '';
+	assignSelect.value = '';
 
 	await loadWorkspaceMembers();
 
@@ -145,7 +153,7 @@ const openModal = async (mode, col, colLabel, itemId = null) => {
 			.then((data) => {
 				quill.clipboard.dangerouslyPasteHTML(data.content || '');
 				existingAttachments = data.attachments || [];
-				assignSelect.value  = data.assigned_to || '';
+				assignSelect.value = data.assigned_to || '';
 				renderAttachmentList();
 				setTimeout(() => quill.focus(), 50);
 			})
@@ -155,8 +163,10 @@ const openModal = async (mode, col, colLabel, itemId = null) => {
 
 const closeModal = () => {
 	itemDialog.close();
-	pendingFiles.forEach((f) => { if (f.previewUrl) URL.revokeObjectURL(f.previewUrl); });
-	pendingFiles        = [];
+	pendingFiles.forEach((f) => {
+		if (f.previewUrl) URL.revokeObjectURL(f.previewUrl);
+	});
+	pendingFiles = [];
 	existingAttachments = [];
 };
 
@@ -179,8 +189,8 @@ document.getElementById('cancel-btn').addEventListener('click', closeModal);
 
 // ── File handling ─────────────────────────────────────────────────────────────
 
-const fileDropZone    = document.getElementById('file-drop-zone');
-const fileInput       = document.getElementById('file-input');
+const fileDropZone = document.getElementById('file-drop-zone');
+const fileInput = document.getElementById('file-input');
 const attachmentsList = document.getElementById('attachments-list');
 
 fileDropZone.addEventListener('dragover', (e) => {
@@ -208,11 +218,11 @@ const handleFiles = (files) => {
 };
 
 const fileIcon = (mimeType) => {
-	if (mimeType === 'application/pdf')                                    return '📄';
-	if (mimeType.includes('word'))                                         return '📝';
-	if (mimeType.includes('sheet') || mimeType.includes('excel'))         return '📊';
-	if (mimeType.includes('zip')   || mimeType.includes('compressed'))    return '🗜️';
-	if (mimeType.startsWith('text/'))                                      return '📃';
+	if (mimeType === 'application/pdf') return '📄';
+	if (mimeType.includes('word')) return '📝';
+	if (mimeType.includes('sheet') || mimeType.includes('excel')) return '📊';
+	if (mimeType.includes('zip') || mimeType.includes('compressed')) return '🗜️';
+	if (mimeType.startsWith('text/')) return '📃';
 	return '📎';
 };
 
@@ -251,22 +261,27 @@ const renderAttachmentList = () => {
 	attachmentsList.innerHTML = '';
 
 	existingAttachments.forEach((att) => {
-		const el = makeAttachmentEl(att.original_name, att.mime_type, att.mime_type.startsWith('image/') ? att.url : null, () => {
-			el.style.opacity = '0.5';
-			fetch('delete_attachment.php', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ id: att.id }),
-			})
-				.then(() => {
-					existingAttachments = existingAttachments.filter((a) => a.id !== att.id);
-					el.remove();
+		const el = makeAttachmentEl(
+			att.original_name,
+			att.mime_type,
+			att.mime_type.startsWith('image/') ? att.url : null,
+			() => {
+				el.style.opacity = '0.5';
+				fetch('delete_attachment.php', {
+					method: 'POST',
+					headers: { 'Content-Type': 'application/json' },
+					body: JSON.stringify({ id: att.id }),
 				})
-				.catch((err) => {
-					console.error('Failed to delete attachment:', err);
-					el.style.opacity = '';
-				});
-		});
+					.then(() => {
+						existingAttachments = existingAttachments.filter((a) => a.id !== att.id);
+						el.remove();
+					})
+					.catch((err) => {
+						console.error('Failed to delete attachment:', err);
+						el.style.opacity = '';
+					});
+			},
+		);
 		attachmentsList.appendChild(el);
 	});
 
@@ -296,19 +311,17 @@ const uploadFiles = async (itemId) => {
 const saveBtn = document.getElementById('save-btn');
 
 saveBtn.addEventListener('click', async () => {
-	const content  = quill.root.innerHTML;
-	const hasText  = quill.getText().trim().length > 0;
+	const content = quill.root.innerHTML;
+	const hasText = quill.getText().trim().length > 0;
 	if (!hasText && pendingFiles.length === 0) return;
 
 	saveBtn.disabled = true;
 	try {
 		const assignedTo = assignSelect.value ? parseInt(assignSelect.value) : null;
-		const assignedMember = assignedTo
-			? workspaceMembers.find((m) => m.id === assignedTo) || null
-			: null;
+		const assignedMember = assignedTo ? workspaceMembers.find((m) => m.id === assignedTo) || null : null;
 
 		if (modalMode === 'add') {
-			const r    = await apiFetch('add_item.php', {
+			const r = await apiFetch('add_item.php', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ col: modalCol, content, assigned_to: assignedTo }),
@@ -316,7 +329,8 @@ saveBtn.addEventListener('click', async () => {
 			const data = await r.json();
 			if (!data.id) throw new Error('Server error creating item');
 			if (pendingFiles.length > 0) await uploadFiles(data.id);
-			document.querySelector(`.drag-list[data-column="${modalCol}"]`)
+			document
+				.querySelector(`.drag-list[data-column="${modalCol}"]`)
 				.appendChild(createItemEl(data.id, content, pendingFiles.length, data.assigned || null));
 		} else {
 			const r = await apiFetch('update_item.php', {
@@ -353,9 +367,9 @@ const updateAssignedBadge = (card, assigned) => {
 			badge.className = 'assigned-badge';
 			card.querySelector('.interactions').before(badge);
 		}
-		badge.textContent   = assigned.initials;
+		badge.textContent = assigned.initials;
 		badge.style.background = assigned.color;
-		badge.title         = assigned.name;
+		badge.title = assigned.name;
 	} else if (badge) {
 		badge.remove();
 	}
@@ -377,7 +391,7 @@ const updateAttachmentBadge = (card, count) => {
 
 const createItemEl = (id, content, attachCount, assigned = null) => {
 	const li = document.createElement('li');
-	li.className  = 'drag-item';
+	li.className = 'drag-item';
 	li.dataset.id = id;
 
 	const contentDiv = document.createElement('div');
@@ -394,10 +408,10 @@ const createItemEl = (id, content, attachCount, assigned = null) => {
 
 	if (assigned) {
 		const ab = document.createElement('div');
-		ab.className        = 'assigned-badge';
-		ab.textContent      = assigned.initials;
+		ab.className = 'assigned-badge';
+		ab.textContent = assigned.initials;
 		ab.style.background = assigned.color;
-		ab.title            = assigned.name;
+		ab.title = assigned.name;
 		li.appendChild(ab);
 	}
 
@@ -417,8 +431,12 @@ const attachItemListeners = (item) => {
 	const dragBtn = item.querySelector('.drag-btn');
 
 	// Dragging is only allowed while the drag handle is held down
-	dragBtn.addEventListener('mousedown', () => { item.draggable = true; });
-	dragBtn.addEventListener('mouseup',   () => { item.draggable = false; }); // no-drag click cleanup
+	dragBtn.addEventListener('mousedown', () => {
+		item.draggable = true;
+	});
+	dragBtn.addEventListener('mouseup', () => {
+		item.draggable = false;
+	}); // no-drag click cleanup
 
 	item.addEventListener('dragstart', dragStart);
 	item.addEventListener('dragend', dragEnd); // dragEnd resets item.draggable = false
@@ -428,16 +446,16 @@ const attachItemListeners = (item) => {
 	item.querySelector('.delete-btn').addEventListener('click', (e) => deleteItem(e.currentTarget));
 
 	item.querySelector('.edit-btn').addEventListener('click', () => {
-		const list    = item.closest('.drag-list');
-		const wrapper = item.closest('.wrapper');
+		const list = item.closest('.drag-list');
+		const wrapper = item.closest('.container');
 		openModal('edit', list.dataset.column, wrapper.querySelector('h2').textContent, item.dataset.id);
 	});
 };
 
 // ── Column management ─────────────────────────────────────────────────────────
 
-const colDialog      = document.getElementById('col-dialog');
-const colLabelInput  = document.getElementById('col-label-input');
+const colDialog = document.getElementById('col-dialog');
+const colLabelInput = document.getElementById('col-label-input');
 
 document.getElementById('add-col-trigger').addEventListener('click', () => {
 	colLabelInput.value = '';
@@ -445,7 +463,10 @@ document.getElementById('add-col-trigger').addEventListener('click', () => {
 	setTimeout(() => colLabelInput.focus(), 50);
 });
 
-colDialog.addEventListener('cancel', (e) => { e.preventDefault(); colDialog.close(); });
+colDialog.addEventListener('cancel', (e) => {
+	e.preventDefault();
+	colDialog.close();
+});
 colDialog.addEventListener('click', (e) => {
 	const r = colDialog.getBoundingClientRect();
 	if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) {
@@ -476,12 +497,13 @@ document.getElementById('col-create-btn').addEventListener('click', () => {
 });
 
 const deleteColumn = (wrapper) => {
-	const key       = wrapper.dataset.colKey;
-	const label     = wrapper.querySelector('h2').textContent;
+	const key = wrapper.dataset.colKey;
+	const label = wrapper.querySelector('h2').textContent;
 	const itemCount = wrapper.querySelectorAll('.drag-item').length;
-	const msg       = itemCount > 0
-		? `Delete "${label}" and its ${itemCount} item${itemCount > 1 ? 's' : ''}?`
-		: `Delete column "${label}"?`;
+	const msg =
+		itemCount > 0
+			? `Delete "${label}" and its ${itemCount} item${itemCount > 1 ? 's' : ''}?`
+			: `Delete column "${label}"?`;
 
 	if (!confirm(msg)) return;
 
@@ -502,7 +524,7 @@ const deleteColumn = (wrapper) => {
 
 const addColumnToDOM = (key, label) => {
 	const wrapper = document.createElement('div');
-	wrapper.className   = 'wrapper';
+	wrapper.className = 'container';
 	wrapper.dataset.colKey = key;
 
 	const colHeader = document.createElement('div');
@@ -511,7 +533,7 @@ const addColumnToDOM = (key, label) => {
 	h2.textContent = label;
 	const deleteColBtn = document.createElement('button');
 	deleteColBtn.className = 'delete-col-btn';
-	deleteColBtn.title     = 'Delete column';
+	deleteColBtn.title = 'Delete column';
 	deleteColBtn.textContent = '×';
 	colHeader.appendChild(h2);
 	colHeader.appendChild(deleteColBtn);
@@ -520,24 +542,24 @@ const addColumnToDOM = (key, label) => {
 	const addForm = document.createElement('div');
 	addForm.className = 'add-form';
 	const addBtn = document.createElement('button');
-	addBtn.className      = 'add-btn';
-	addBtn.dataset.col    = key;
-	addBtn.dataset.label  = label;
-	addBtn.textContent    = '+ Add';
+	addBtn.className = 'add-btn';
+	addBtn.dataset.col = key;
+	addBtn.dataset.label = label;
+	addBtn.textContent = '+ Add';
 	addForm.appendChild(addBtn);
 	wrapper.appendChild(addForm);
 
 	const ul = document.createElement('ul');
-	ul.className        = 'drag-list';
-	ul.dataset.column   = key;
+	ul.className = 'drag-list';
+	ul.dataset.column = key;
 	wrapper.appendChild(ul);
 
 	document.getElementById('drag-lists').appendChild(wrapper);
 
 	ul.addEventListener('dragenter', dragEnter);
 	ul.addEventListener('dragleave', dragLeave);
-	ul.addEventListener('dragover',  allowDrop);
-	ul.addEventListener('drop',      drop);
+	ul.addEventListener('dragover', allowDrop);
+	ul.addEventListener('drop', drop);
 
 	addBtn.addEventListener('click', () => openModal('add', key, label));
 	deleteColBtn.addEventListener('click', () => deleteColumn(wrapper));
@@ -548,8 +570,8 @@ const addColumnToDOM = (key, label) => {
 document.querySelectorAll('.drag-list').forEach((list) => {
 	list.addEventListener('dragenter', dragEnter);
 	list.addEventListener('dragleave', dragLeave);
-	list.addEventListener('dragover',  allowDrop);
-	list.addEventListener('drop',      drop);
+	list.addEventListener('dragover', allowDrop);
+	list.addEventListener('drop', drop);
 });
 
 document.querySelectorAll('.drag-item').forEach((item) => attachItemListeners(item));
@@ -559,5 +581,5 @@ document.querySelectorAll('.add-btn').forEach((btn) => {
 });
 
 document.querySelectorAll('.delete-col-btn').forEach((btn) => {
-	btn.addEventListener('click', () => deleteColumn(btn.closest('.wrapper')));
+	btn.addEventListener('click', () => deleteColumn(btn.closest('.container')));
 });

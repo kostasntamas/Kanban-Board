@@ -1,0 +1,54 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+:root {
+	--radius-4: 4px;
+	--height: 85dvb;
+	--header-height: 95px;
+	--count: 6;
+	--list-height: calc(var(--height) / var(--count) + 1rem);
+}
+
+.wrapper {
+	width: min(100% - 2rem, 960px);
+	margin-inline: auto;
+}
+
+.shadow {
+	box-shadow:
+		rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
+		rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+}
+
+body {
+	min-height: 100dvb;
+	font-family:
+		system-ui,
+		-apple-system,
+		BlinkMacSystemFont,
+		'Segoe UI',
+		sans-serif;
+	display: grid;
+	background-image: radial-gradient(rgba(0, 0, 0, 0.877) 1px, transparent 0);
+	background-size: 15px 15px;
+	background-position: -19px -19px;
+}
+
+/* ── <dialog> shared ─────────────────────────────────────────────────────────── */
+
+dialog {
+	border: none;
+	padding: 0;
+	margin: auto;
+	border-radius: 8px;
+	box-shadow:
+		rgba(67, 71, 85, 0.27) 0px 0px 0.25em,
+		rgba(90, 125, 188, 0.05) 0px 0.25em 1em;
+}
+
+dialog::backdrop {
+	background: rgba(0, 0, 0, 0.5);
+}

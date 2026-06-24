@@ -73,3 +73,9 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS todo_attachments (
 try { $pdo->exec("ALTER TABLE kanban_columns ADD COLUMN workspace_id INT NULL"); } catch (PDOException $e) {}
 try { $pdo->exec("ALTER TABLE todo_items ADD COLUMN workspace_id INT NULL");     } catch (PDOException $e) {}
 try { $pdo->exec("ALTER TABLE todo_items ADD COLUMN assigned_to  INT NULL");     } catch (PDOException $e) {}
+
+// Fix todo_items.id missing AUTO_INCREMENT (table created by old schema)
+try {
+    $pdo->exec("DELETE FROM todo_items WHERE id = 0");
+    $pdo->exec("ALTER TABLE todo_items MODIFY COLUMN id INT NOT NULL AUTO_INCREMENT");
+} catch (PDOException $e) {}

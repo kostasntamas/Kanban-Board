@@ -45,13 +45,18 @@ $dragIconSvg   = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <link rel="stylesheet" href="global.css">
     <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js" defer></script>
     <title><?= htmlspecialchars($wsName) ?> — Kanban</title>
 </head>
+
 <body>
 
     <!-- Item dialog -->
@@ -99,8 +104,8 @@ $dragIconSvg   = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
     <aside id="sidebar">
         <!-- User avatar -->
         <a href="workspaces.php" class="sidebar-avatar"
-           style="background:<?= avatarColor($me['id']) ?>"
-           title="<?= htmlspecialchars($me['name']) ?> — <?= htmlspecialchars($wsName) ?>">
+            style="background:<?= avatarColor($me['id']) ?>"
+            title="<?= htmlspecialchars($me['name']) ?> — <?= htmlspecialchars($wsName) ?>">
             <?= htmlspecialchars(initials($me['name'])) ?>
         </a>
 
@@ -110,22 +115,36 @@ $dragIconSvg   = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
         <!-- Bottom nav -->
         <nav class="sidebar-nav">
             <a href="workspaces.php" class="sidebar-nav-btn" title="Workspaces">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7" />
+                    <rect x="14" y="3" width="7" height="7" />
+                    <rect x="14" y="14" width="7" height="7" />
+                    <rect x="3" y="14" width="7" height="7" />
+                </svg>
             </a>
             <?php if ($me['is_admin']): ?>
-            <a href="admin.php" class="sidebar-nav-btn" title="Admin">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            </a>
+                <a href="admin.php" class="sidebar-nav-btn" title="Admin">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                </a>
             <?php endif; ?>
             <a href="logout.php" class="sidebar-nav-btn" title="Sign out">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                    <polyline points="16 17 21 12 16 7" />
+                    <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
             </a>
         </nav>
     </aside>
 
     <main id="drag-lists">
         <?php foreach ($columns as $colKey => $col): ?>
-            <div class="wrapper" data-col-key="<?= htmlspecialchars($colKey) ?>">
+            <div class="container shadow" data-col-key="<?= htmlspecialchars($colKey) ?>">
                 <div class="col-header">
                     <h2><?= htmlspecialchars($col['label']) ?></h2>
                     <button class="delete-col-btn" title="Delete column">&times;</button>
@@ -146,8 +165,8 @@ $dragIconSvg   = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
                             <?php endif; ?>
                             <?php if ($item['assigned_name']): ?>
                                 <div class="assigned-badge"
-                                     style="background:<?= avatarColor((int)$item['assigned_user_id']) ?>"
-                                     title="<?= htmlspecialchars($item['assigned_name']) ?>">
+                                    style="background:<?= avatarColor((int)$item['assigned_user_id']) ?>"
+                                    title="<?= htmlspecialchars($item['assigned_name']) ?>">
                                     <?= htmlspecialchars(initials($item['assigned_name'])) ?>
                                 </div>
                             <?php endif; ?>
@@ -162,8 +181,8 @@ $dragIconSvg   = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
             </div>
         <?php endforeach; ?>
     </main>
-
-    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
-    <script src="script.js"></script>
 </body>
+
+<script src="script.js" defer></script>
+
 </html>
