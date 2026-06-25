@@ -16,6 +16,12 @@
 	--header-height: 95px;
 	--count: 6;
 	--list-height: calc(var(--height) / var(--count) + 1rem);
+
+
+	/* color */
+	--white: #fafafa;
+	--offwhite: #fbfbfb;
+
 }
 
 ::-webkit-scrollbar {
@@ -67,7 +73,7 @@ body {
 		sans-serif;
 	display: grid;
 	grid-template-rows: auto 1fr;
-	background-image: radial-gradient(rgba(0, 0, 0, 0.35) 0.7px, transparent 0);
+	background-image: radial-gradient(rgba(0, 0, 0, 0.35) 0.7px, var(--white) 0);
 	background-size: 15px 15px;
 	background-position: -20px -20px;
 	&:has(aside#sidebar) {

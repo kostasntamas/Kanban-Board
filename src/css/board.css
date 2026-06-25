@@ -20,7 +20,7 @@
 	justify-content: center;
 	font-size: 0.72rem;
 	font-weight: 700;
-	color: white;
+	color: var(--white);
 	text-decoration: none;
 	flex-shrink: 0;
 }
@@ -94,7 +94,7 @@ a.sidebar-nav-btn.logout::after {
 	margin-block: auto;
 	height: 100%;
 	/* overflow: hidden; */
-	background: white;
+	background: var(--white);
 
 	.add-form {
 		padding: 8px 10px;
@@ -136,7 +136,7 @@ a.sidebar-nav-btn.logout::after {
 	cursor: grabbing;
 }
 .col-drag-btn:hover {
-	color: white;
+	color: var(--white);
 	background: #5392ff;
 }
 .col-drag-btn > svg {
@@ -209,12 +209,10 @@ a.sidebar-nav-btn.logout::after {
 	padding: 0.4em;
 	cursor: pointer;
 	border: 1px dashed #bbb;
-	background: none;
 	border-radius: var(--radius-4);
 	font-size: 0.88rem;
 	color: #666;
 	transition:
-		background 0.2s,
 		border-color 0.2s,
 		color 0.2s;
 }
@@ -309,7 +307,7 @@ ul .drag-item {
 	.delete-btn {
 		&:hover {
 			background-color: rgb(255, 114, 114);
-			color: white;
+			color: var(--white);
 		}
 	}
 
@@ -387,7 +385,7 @@ ul .drag-item {
 	justify-content: center;
 	font-size: 0.6rem;
 	font-weight: 700;
-	color: white;
+	color: var(--white);
 	flex-shrink: 0;
 }
 
@@ -401,7 +399,7 @@ ul .drag-item {
 	border-radius: var(--radius-4);
 	font-size: 0.82rem;
 	font-family: inherit;
-	background: white;
+	background: var(--white);
 	outline: none;
 	cursor: pointer;
 	transition: border-color 0.15s;
@@ -431,7 +429,7 @@ ul .drag-item {
 	padding: 0.35rem 0.5rem;
 	border: 1px solid #d0d0d0;
 	border-radius: var(--radius-4);
-	background: white;
+	background: var(--white);
 	cursor: text;
 	transition: border-color 0.15s;
 	min-height: 36px;
@@ -468,7 +466,7 @@ ul .drag-item {
 	justify-content: center;
 	font-size: 0.55rem;
 	font-weight: 700;
-	color: white;
+	color: var(--white);
 	flex-shrink: 0;
 }
 
@@ -502,7 +500,7 @@ ul .drag-item {
 	left: 0;
 	right: 0;
 	z-index: 100;
-	background: white;
+	background: var(--white);
 	border: 1px solid #d0d0d0;
 	border-radius: var(--radius-4);
 	margin-top: 4px;
@@ -578,7 +576,7 @@ ul .drag-item {
 }
 .modal-close-btn:hover {
 	background: rgb(255, 114, 114);
-	color: white;
+	color: var(--white);
 }
 
 .dialog-body {
@@ -773,7 +771,7 @@ ul .drag-item {
 }
 .btn-save {
 	background: #1a1a1a;
-	color: white;
+	color: var(--white);
 }
 .btn-save:hover {
 	background: #000;

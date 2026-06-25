@@ -9,7 +9,7 @@ const createDragPreview = (item) => {
 	const preview = item.cloneNode(true);
 	preview.style.cssText =
 		'position:fixed;top:-9999px;left:-9999px;width:180px;opacity:0.9;' +
-		'border:1px solid #bbb;border-radius:6px;background:white;padding:8px;' +
+		'border:1px solid #bbb;border-radius:6px;background:var(--white);padding:8px;' +
 		'box-shadow:0 4px 12px rgba(0,0,0,0.15);pointer-events:none;';
 	const interactions = preview.querySelector('.interactions');
 	if (interactions) interactions.remove();
@@ -97,7 +97,7 @@ export const colDragStart = (e) => {
 	const preview = document.createElement('div');
 	preview.style.cssText =
 		'position:fixed;top:-9999px;left:-9999px;width:220px;padding:12px 16px;' +
-		'background:white;border:1px solid #ccc;border-radius:8px;' +
+		'background:var(--white);border:1px solid #ccc;border-radius:8px;' +
 		'box-shadow:0 8px 24px rgba(0,0,0,0.18);pointer-events:none;font-family:inherit;';
 	preview.innerHTML =
 		`<div style="font-weight:600;font-size:0.95rem;margin-bottom:4px">${label}</div>` +
@@ -156,9 +156,7 @@ export const colDrop = (e) => {
 
 const saveColumnOrder = () => {
 	const lists = document.getElementById('drag-lists');
-	const order = [...lists.querySelectorAll('.container:not(.wrapper--add-col)')].map(
-		(c) => c.dataset.colKey,
-	);
+	const order = [...lists.querySelectorAll('.container:not(.wrapper--add-col)')].map((c) => c.dataset.colKey);
 	apiFetch('api/save_column_order.php', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
