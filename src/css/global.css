@@ -5,11 +5,40 @@
 }
 
 :root {
+	--sb-track-color: #e6e6e6;
+	--sb-thumb-color: #aaa;
+	--sb-width: 5px;
+	--sb-height: 6px;
+
+
 	--radius-4: 4px;
 	--height: 85dvb;
 	--header-height: 95px;
 	--count: 6;
 	--list-height: calc(var(--height) / var(--count) + 1rem);
+}
+
+::-webkit-scrollbar {
+  width: var(--sb-width);
+  height: var(--sb-height);
+}
+
+::-webkit-scrollbar-track {
+  background: var(--sb-track-color);
+  border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb-color);
+  border-radius: 2px;
+  
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  body {
+    scrollbar-color: var(--sb-thumb-color)
+                     var(--sb-track-color);
+  }
 }
 
 .wrapper {
@@ -29,6 +58,7 @@
 
 body {
 	min-height: 100dvb;
+	/* background-color: red; */
 	font-family:
 		system-ui,
 		-apple-system,

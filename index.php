@@ -1,6 +1,7 @@
 <?php
-require 'db.php';
-require 'auth.php';
+require 'includes/db.php';
+require 'includes/auth.php';
+require 'includes/vite.php';
 $me          = requireLogin();
 $workspaceId = requireWorkspace($me);
 
@@ -22,18 +23,36 @@ foreach ($colRows as $col) {
 }
 
 $rows = $pdo->prepare("
-    SELECT t.*, COALESCE(a.cnt, 0) AS attachment_count,
-           u.name AS assigned_name, u.id AS assigned_user_id
+    SELECT t.*, COALESCE(a.cnt, 0) AS attachment_count
     FROM todo_items t
     LEFT JOIN (SELECT todo_id, COUNT(*) AS cnt FROM todo_attachments GROUP BY todo_id) a
         ON a.todo_id = t.id
-    LEFT JOIN users u ON u.id = t.assigned_to
     WHERE t.workspace_id = ?
     ORDER BY t.col, t.position
 ");
 $rows->execute([$workspaceId]);
 
-foreach ($rows->fetchAll(PDO::FETCH_ASSOC) as $row) {
+$allItems = $rows->fetchAll(PDO::FETCH_ASSOC);
+$itemIds  = array_column($allItems, 'id');
+
+$assigneesByItem = [];
+if ($itemIds) {
+    $ph = implode(',', array_fill(0, count($itemIds), '?'));
+    $aStmt = $pdo->prepare("
+        SELECT tia.todo_id, u.id, u.name
+        FROM todo_item_assignees tia
+        JOIN users u ON u.id = tia.user_id
+        WHERE tia.todo_id IN ($ph)
+        ORDER BY u.name
+    ");
+    $aStmt->execute($itemIds);
+    foreach ($aStmt->fetchAll(PDO::FETCH_ASSOC) as $ar) {
+        $assigneesByItem[(int)$ar['todo_id']][] = $ar;
+    }
+}
+
+foreach ($allItems as $row) {
+    $row['assignees'] = $assigneesByItem[(int)$row['id']] ?? [];
     if (isset($columns[$row['col']])) {
         $columns[$row['col']]['items'][] = $row;
     }
@@ -77,30 +96,39 @@ $dragIconSvg   = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
-    <link rel="stylesheet" href="global.css">
-    <link rel="stylesheet" href="style.css">
-
-    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js" defer></script>
-    <script src="script.js" defer></script>
+    <?= vite_assets('src/js/board.js') ?>
     <title><?= htmlspecialchars($wsName) ?> — Kanban</title>
 </head>
 
 <body>
 
+    <script>
+        window.__KANBAN_COLUMNS__ = <?= json_encode(array_map(
+                                        fn($k, $v) => ['key' => $k, 'label' => $v['label']],
+                                        array_keys($columns),
+                                        $columns
+                                    )) ?>;
+    </script>
+
     <!-- Item dialog -->
     <dialog id="item-dialog">
         <header class="dialog-header">
             <h3 id="modal-title">Add Item</h3>
+            <select id="col-select" class="col-select"></select>
             <button id="modal-close" class="modal-close-btn" aria-label="Close">&times;</button>
         </header>
         <div class="dialog-body">
             <div id="quill-editor"></div>
             <div class="assign-section">
-                <p class="attachments-label">Assignee</p>
-                <select id="assign-select" class="assign-select">
-                    <option value="">Unassigned</option>
-                </select>
+                <p class="attachments-label">Assignees</p>
+                <div class="multiselect" id="assign-multiselect">
+                    <div class="multiselect-control" id="assign-control">
+                        <div class="multiselect-chips" id="assign-chips"></div>
+                        <input type="text" class="multiselect-search" id="assign-search"
+                            placeholder="Add assignee..." autocomplete="off">
+                    </div>
+                    <div class="multiselect-dropdown hidden" id="assign-dropdown"></div>
+                </div>
             </div>
             <div class="attachments-section">
                 <p class="attachments-label">Attachments</p>
@@ -177,6 +205,7 @@ $dragIconSvg   = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
         <?php foreach ($columns as $colKey => $col): ?>
             <div class="container shadow" data-col-key="<?= htmlspecialchars($colKey) ?>">
                 <div class="col-header">
+                    <button class="col-drag-btn" title="Drag column"><?= $dragIconSvg ?></button>
                     <h2><?= htmlspecialchars($col['label']) ?></h2>
                     <button class="delete-col-btn" title="Delete column">&times;</button>
                 </div>
@@ -194,11 +223,15 @@ $dragIconSvg   = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
                                     <span>&#128206;</span> <?= (int) $item['attachment_count'] ?>
                                 </div>
                             <?php endif; ?>
-                            <?php if ($item['assigned_name']): ?>
-                                <div class="assigned-badge"
-                                    style="background:<?= avatarColor((int)$item['assigned_user_id']) ?>"
-                                    title="<?= htmlspecialchars($item['assigned_name']) ?>">
-                                    <?= htmlspecialchars(initials($item['assigned_name'])) ?>
+                            <?php if (!empty($item['assignees'])): ?>
+                                <div class="assigned-badges">
+                                    <?php foreach ($item['assignees'] as $assignee): ?>
+                                        <div class="assigned-badge"
+                                            style="background:<?= avatarColor((int)$assignee['id']) ?>"
+                                            title="<?= htmlspecialchars($assignee['name']) ?>">
+                                            <?= htmlspecialchars(initials($assignee['name'])) ?>
+                                        </div>
+                                    <?php endforeach; ?>
                                 </div>
                             <?php endif; ?>
                             <div class="interactions">

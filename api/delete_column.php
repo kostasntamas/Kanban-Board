@@ -1,6 +1,6 @@
 <?php
-require 'db.php';
-require 'auth.php';
+require __DIR__ . '/../includes/db.php';
+require __DIR__ . '/../includes/auth.php';
 header('Content-Type: application/json');
 $currentUser = apiLogin();
 $workspaceId = apiWorkspace($currentUser);
@@ -32,7 +32,7 @@ $files = $stmt->fetchAll(PDO::FETCH_COLUMN);
 $pdo->prepare("DELETE FROM todo_items WHERE col = ?")->execute([$key]);
 
 foreach ($files as $filename) {
-    $path = __DIR__ . '/uploads/' . $filename;
+    $path = __DIR__ . '/../uploads/' . $filename;
     if (file_exists($path)) unlink($path);
 }
 

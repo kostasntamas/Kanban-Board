@@ -69,6 +69,14 @@ $pdo->exec("CREATE TABLE IF NOT EXISTS todo_attachments (
     FOREIGN KEY (todo_id) REFERENCES todo_items(id) ON DELETE CASCADE
 )");
 
+$pdo->exec("CREATE TABLE IF NOT EXISTS todo_item_assignees (
+    todo_id  INT NOT NULL,
+    user_id  INT NOT NULL,
+    PRIMARY KEY (todo_id, user_id),
+    FOREIGN KEY (todo_id) REFERENCES todo_items(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id)      ON DELETE CASCADE
+)");
+
 // ── Migrations for existing installs ──────────────────────────────────────────
 try { $pdo->exec("ALTER TABLE kanban_columns ADD COLUMN workspace_id INT NULL"); } catch (PDOException $e) {}
 try { $pdo->exec("ALTER TABLE todo_items ADD COLUMN workspace_id INT NULL");     } catch (PDOException $e) {}
@@ -78,4 +86,10 @@ try { $pdo->exec("ALTER TABLE todo_items ADD COLUMN assigned_to  INT NULL");    
 try {
     $pdo->exec("DELETE FROM todo_items WHERE id = 0");
     $pdo->exec("ALTER TABLE todo_items MODIFY COLUMN id INT NOT NULL AUTO_INCREMENT");
+} catch (PDOException $e) {}
+
+// Migrate legacy single assigned_to → junction table
+try {
+    $pdo->exec("INSERT IGNORE INTO todo_item_assignees (todo_id, user_id)
+                SELECT id, assigned_to FROM todo_items WHERE assigned_to IS NOT NULL");
 } catch (PDOException $e) {}

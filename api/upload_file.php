@@ -1,6 +1,6 @@
 <?php
-require 'db.php';
-require 'auth.php';
+require __DIR__ . '/../includes/db.php';
+require __DIR__ . '/../includes/auth.php';
 $currentUser = apiLogin();
 $workspaceId = apiWorkspace($currentUser);
 
@@ -50,7 +50,7 @@ if (in_array($ext, $blockedExt, true)) {
 }
 
 $filename  = bin2hex(random_bytes(16)) . ($ext ? '.' . $ext : '');
-$uploadDir = __DIR__ . '/uploads/';
+$uploadDir = __DIR__ . '/../uploads/';
 
 if (!is_dir($uploadDir)) {
     mkdir($uploadDir, 0755, true);

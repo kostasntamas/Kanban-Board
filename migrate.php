@@ -1,5 +1,5 @@
 <?php
-require 'db.php';
+require 'includes/db.php';
 
 $pdo->exec("CREATE TABLE IF NOT EXISTS todo_attachments (
     id            INT AUTO_INCREMENT PRIMARY KEY,

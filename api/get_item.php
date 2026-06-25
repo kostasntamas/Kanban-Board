@@ -1,6 +1,6 @@
 <?php
-require 'db.php';
-require 'auth.php';
+require __DIR__ . '/../includes/db.php';
+require __DIR__ . '/../includes/auth.php';
 header('Content-Type: application/json');
 $currentUser = apiLogin();
 $workspaceId = apiWorkspace($currentUser);
@@ -32,19 +32,20 @@ foreach ($attachments as &$att) {
     $att['url'] = 'uploads/' . $att['filename'];
 }
 
-$assigned = null;
-if ($item['assigned_to']) {
-    $s = $pdo->prepare("SELECT id, name FROM users WHERE id = ?");
-    $s->execute([$item['assigned_to']]);
-    $u = $s->fetch(PDO::FETCH_ASSOC);
-    if ($u) $assigned = ['id' => (int)$u['id'], 'name' => $u['name'], 'initials' => initials($u['name']), 'color' => avatarColor($u['id'])];
+$aStmt = $pdo->prepare("
+    SELECT u.id, u.name FROM todo_item_assignees tia
+    JOIN users u ON u.id = tia.user_id WHERE tia.todo_id = ? ORDER BY u.name
+");
+$aStmt->execute([$id]);
+$assignees = [];
+foreach ($aStmt->fetchAll(PDO::FETCH_ASSOC) as $u) {
+    $assignees[] = ['id' => (int)$u['id'], 'name' => $u['name'], 'initials' => initials($u['name']), 'color' => avatarColor($u['id'])];
 }
 
 echo json_encode([
     'id'          => (int) $item['id'],
     'content'     => $item['content'],
     'col'         => $item['col'],
-    'assigned_to' => $item['assigned_to'] ? (int) $item['assigned_to'] : null,
-    'assigned'    => $assigned,
+    'assignees'   => $assignees,
     'attachments' => $attachments,
 ]);

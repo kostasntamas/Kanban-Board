@@ -1,5 +1,6 @@
 <?php
-require 'db.php';
+require 'includes/db.php';
+require 'includes/vite.php';
 if (session_status() === PHP_SESSION_NONE) session_start();
 
 // If already logged in, go to workspaces
@@ -40,8 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="global.css">
-    <link rel="stylesheet" href="pages.css">
+    <?= vite_assets('src/js/pages.js') ?>
     <title>Sign in — Kanban</title>
 </head>
 

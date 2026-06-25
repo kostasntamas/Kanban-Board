@@ -1,6 +1,6 @@
 <?php
-require 'db.php';
-require 'auth.php';
+require __DIR__ . '/../includes/db.php';
+require __DIR__ . '/../includes/auth.php';
 header('Content-Type: application/json');
 $currentUser = apiLogin();
 $workspaceId = apiWorkspace($currentUser);
@@ -22,7 +22,7 @@ if (!$row) {
     die(json_encode(['error' => 'Attachment not found']));
 }
 
-$path = __DIR__ . '/uploads/' . $row['filename'];
+$path = __DIR__ . '/../uploads/' . $row['filename'];
 if (file_exists($path)) {
     unlink($path);
 }

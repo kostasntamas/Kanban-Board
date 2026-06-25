@@ -1,6 +1,7 @@
 <?php
-require 'db.php';
-require 'auth.php';
+require 'includes/db.php';
+require 'includes/auth.php';
+require 'includes/vite.php';
 $me = requireLogin();
 requireAdmin($me);
 
@@ -54,8 +55,7 @@ $users = $pdo->query("SELECT id, name, email, is_admin, created_at FROM users OR
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="global.css">
-    <link rel="stylesheet" href="pages.css">
+    <?= vite_assets('src/js/pages.js') ?>
     <title>Admin — Kanban</title>
 </head>
 

@@ -1,6 +1,7 @@
 <?php
-require 'db.php';
-require 'auth.php';
+require 'includes/db.php';
+require 'includes/auth.php';
+require 'includes/vite.php';
 $me = requireLogin();
 
 // ── Actions ────────────────────────────────────────────────────────────────────
@@ -132,13 +133,12 @@ foreach ($workspaces as $ws) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workspaces — Kanban</title>
-    <link rel="stylesheet" href="global.css">
-    <link rel="stylesheet" href="pages.css">
+    <?= vite_assets('src/js/pages.js') ?>
 </head>
 
 <body class="page-body">
     <!-- New-Workspace dialog -->
-    <dialog id="newWsForm" class="card">
+    <dialog id="newWsForm" class="card" closedby="any">
         <p class="card-title" style="font-size:0.95rem">Create workspace</p>
         <form method="POST" style="display:flex;gap:0.5rem">
             <input type="hidden" name="action" value="create">
@@ -178,13 +178,15 @@ foreach ($workspaces as $ws) {
             <div class="workspaces-grid">
                 <?php foreach ($workspaces as $ws): ?>
                     <div class="workspace-card">
-                        <div>
-                            <div class="workspace-name"><?= htmlspecialchars($ws['name']) ?></div>
-                            <div class="workspace-meta">
-                                <span><?= $ws['member_count'] ?> member<?= $ws['member_count'] !== '1' ? 's' : '' ?></span>
+                        <div style="border-bottom: 1px dotted black; padding-bottom: .5rem;">
+                            <div class="workspace-name">
+                                <h2><?= htmlspecialchars($ws['name']) ?></h2>
                                 <span class="role-badge <?= $ws['role'] === 'owner' ? 'owner' : 'member' ?>">
                                     <?= $ws['role'] ?>
                                 </span>
+                            </div>
+                            <div class="workspace-meta">
+                                <span><?= $ws['member_count'] ?> member<?= $ws['member_count'] !== '1' ? 's' : '' ?></span>
                             </div>
                         </div>
 

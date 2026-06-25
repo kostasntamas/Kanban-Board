@@ -1,9 +1,5 @@
 #sidebar {
-	/* position: fixed;
-	left: 0;
-	top: 0;
-	bottom: 0; */
-	width: 52px;
+	width: 50px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -87,10 +83,9 @@ a.sidebar-nav-btn.logout::after {
 	grid-area: main;
 }
 #workspace-header {
-	/* position: fixed;
-    top: 0;
-    left:100px; */
 	grid-area: header;
+	padding-inline-start: 50px;
+	padding-block-start: 10px;
 }
 
 .container {
@@ -98,7 +93,7 @@ a.sidebar-nav-btn.logout::after {
 	max-height: var(--height);
 	margin-block: auto;
 	height: 100%;
-	overflow: hidden;
+	/* overflow: hidden; */
 	background: white;
 
 	.add-form {
@@ -118,6 +113,40 @@ a.sidebar-nav-btn.logout::after {
 .col-header h2 {
 	text-align: center;
 	font-size: 1rem;
+}
+
+.col-drag-btn {
+	position: absolute;
+	left: 0.5rem;
+	top: 50%;
+	transform: translateY(-50%);
+	appearance: none;
+	background: none;
+	border: none;
+	cursor: grab;
+	padding: 0.2em;
+	border-radius: var(--radius-4);
+	color: #ccc;
+	line-height: 1;
+	transition:
+		color 0.15s,
+		background 0.15s;
+}
+.col-drag-btn:active {
+	cursor: grabbing;
+}
+.col-drag-btn:hover {
+	color: white;
+	background: #5392ff;
+}
+.col-drag-btn > svg {
+	height: 18px;
+	width: 18px;
+	display: block;
+}
+
+.container.col-dragging {
+	opacity: 0.4;
 }
 
 .delete-col-btn {
@@ -202,51 +231,52 @@ a.sidebar-nav-btn.logout::after {
 	display: flex;
 	max-height: calc(100% - 95px);
 	flex-direction: column;
-	gap: 1rem;
-	padding: 20px 10px;
+	gap: .8rem;
+	padding: 20px 10px 20px 10px;
+	overflow: auto;
 	scrollbar-gutter: stable;
 	border: 2px dashed transparent;
-	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	/* transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); */
 }
 
 .drag-list.drop {
-	border: 2px dashed black;
+	outline: 1px dashed black;
+	outline-offset: 3px;
 }
 
 .drag-list.drop .drag-item {
 	pointer-events: none;
 }
 
-ul:has(.drag-item:nth-child(5)) {
-	overflow: auto;
-	padding: 20px 5px 20px 10px;
-}
-
 ul .drag-item {
 	user-select: none;
 	border: 1px dotted #808080;
 	border-radius: var(--radius-4);
-	min-height: var(--list-height);
-	padding: 10px 30px 10px 10px;
+	min-height: min(100%, 140px);
+	padding:0.4em 0 0.6em 0.6em;
 	position: relative;
 	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-	display: flex;
-	flex-direction: column;
+	display: grid;
 	gap: 0.35rem;
+	grid-template-columns: 1fr auto;
+	grid-template-rows: 1fr 1fr;
+	grid-template-areas: 'content intr' 'content intr' 'budget intr';
+	transition: transform .25s ease;
 
 	&.dragging {
-		opacity: 0.5;
-		transform: rotate(2deg) scale(0.8);
+		opacity: 0.65;
+		transform: rotate(1deg) scale(0.95);
+		transition: transform .25s ease;
 	}
 
 	.interactions {
-		position: absolute;
-		right: 0;
-		top: 0;
 		line-height: 1;
-		display: grid;
-		gap: 0.1em;
-		padding: 0.2em;
+		display: flex;
+		gap: 0.4em;
+		grid-area: intr;
+		flex-direction: column;
+		margin-top: -.1em;
+		margin-right: .1em;
 	}
 
 	.delete-btn,
@@ -255,7 +285,7 @@ ul .drag-item {
 		appearance: none;
 		border: none;
 		background: none;
-		padding: 0.25rem;
+		padding: .3em;
 		cursor: pointer;
 		color: gray;
 		border-radius: var(--radius-4);
@@ -271,13 +301,12 @@ ul .drag-item {
 			cursor: grabbing;
 		}
 		&:hover {
-			background: #5392ff;
+			background-color: #5392ff;
 			color: rgb(255, 255, 255);
 		}
 	}
 
 	.delete-btn {
-		aspect-ratio: 1 / 1;
 		&:hover {
 			background-color: rgb(255, 114, 114);
 			color: white;
@@ -285,24 +314,21 @@ ul .drag-item {
 	}
 
 	.edit-btn {
-		font-size: 0.85rem;
-		aspect-ratio: 1 / 1;
 		&:hover {
-			background: #e8f0fe;
+			background-color: #e8f0fe;
 			color: black;
 		}
 	}
 }
 
 .item-content {
-	font-size: 0.88rem;
-	line-height: 1.45;
+	font-size: 0.85rem;
 	max-height: 130px;
 	overflow: hidden;
-	padding-right: 30px;
 	word-break: break-word;
 	mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
 	-webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+	grid-area: content;
 
 	p {
 		margin: 0 0 0.3em;
@@ -345,6 +371,13 @@ ul .drag-item {
 	color: #888;
 }
 
+.assigned-badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 2px;
+	grid-area: budget;
+}
+
 .assigned-badge {
 	width: 22px;
 	height: 22px;
@@ -352,11 +385,32 @@ ul .drag-item {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: 0.62rem;
+	font-size: 0.6rem;
 	font-weight: 700;
 	color: white;
 	flex-shrink: 0;
 }
+
+/* ── Column selector in dialog header ──────────────────────────────────────── */
+
+.col-select {
+	margin-left: auto;
+	margin-right: 0.5rem;
+	padding: 0.3rem 0.5rem;
+	border: 1px solid #d0d0d0;
+	border-radius: var(--radius-4);
+	font-size: 0.82rem;
+	font-family: inherit;
+	background: white;
+	outline: none;
+	cursor: pointer;
+	transition: border-color 0.15s;
+}
+.col-select:focus {
+	border-color: #333;
+}
+
+/* ── Multiselect assignees ─────────────────────────────────────────────────── */
 
 .assign-section {
 	display: flex;
@@ -365,19 +419,128 @@ ul .drag-item {
 	flex-shrink: 0;
 }
 
-.assign-select {
-	padding: 0.45rem 0.6rem;
+.multiselect {
+	position: relative;
+}
+
+.multiselect-control {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px;
+	padding: 0.35rem 0.5rem;
 	border: 1px solid #d0d0d0;
 	border-radius: var(--radius-4);
-	font-size: 0.9rem;
-	font-family: inherit;
 	background: white;
-	outline: none;
-	cursor: pointer;
+	cursor: text;
 	transition: border-color 0.15s;
+	min-height: 36px;
 }
-.assign-select:focus {
+.multiselect-control:focus-within {
 	border-color: #333;
+}
+
+.multiselect-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+.multiselect-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	background: #f0f0f0;
+	border: 1px solid #ddd;
+	border-radius: 100px;
+	padding: 2px 6px 2px 2px;
+	font-size: 0.78rem;
+	line-height: 1.3;
+	white-space: nowrap;
+}
+
+.chip-avatar {
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 0.55rem;
+	font-weight: 700;
+	color: white;
+	flex-shrink: 0;
+}
+
+.chip-remove {
+	background: none;
+	border: none;
+	cursor: pointer;
+	font-size: 0.85rem;
+	padding: 0 2px;
+	color: #999;
+	line-height: 1;
+}
+.chip-remove:hover {
+	color: #e00;
+}
+
+.multiselect-search {
+	border: none;
+	outline: none;
+	font-size: 0.85rem;
+	font-family: inherit;
+	flex: 1;
+	min-width: 80px;
+	padding: 2px 0;
+	background: transparent;
+}
+
+.multiselect-dropdown {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	right: 0;
+	z-index: 100;
+	background: white;
+	border: 1px solid #d0d0d0;
+	border-radius: var(--radius-4);
+	margin-top: 4px;
+	max-height: 180px;
+	overflow-y: auto;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.multiselect-dropdown.hidden {
+	display: none;
+}
+
+.multiselect-option {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 0.45rem 0.6rem;
+	cursor: pointer;
+	font-size: 0.85rem;
+	transition: background 0.1s;
+}
+.multiselect-option:hover {
+	background: #f5f5f5;
+}
+.multiselect-option.selected {
+	background: #f0f7ff;
+}
+
+.check-mark {
+	margin-left: auto;
+	color: #333;
+	font-size: 0.8rem;
+}
+
+.multiselect-empty {
+	padding: 0.6rem;
+	text-align: center;
+	font-size: 0.82rem;
+	color: #999;
 }
 
 /* ── Item dialog ─────────────────────────────────────────────────────────────── */
