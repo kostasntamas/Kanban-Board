@@ -196,10 +196,39 @@ a.sidebar-nav-btn.logout::after {
 		border-color 0.2s,
 		background 0.2s;
 }
+
 #add-col-trigger:hover {
 	color: #333;
 	border-color: #555;
 	background: #f5f5f5;
+}
+.enter-workspace-sidebar {
+	/* --workspace-color: var(lightpink, gray); */
+	--workspace-color: lightpink;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	color: contrast-color(var(--workspace-color));
+	border: 1px solid var(--workspace-color);
+	background: var(--workspace-color);
+	cursor: pointer;
+	font-size: 0.65rem;
+	font-weight: bold;
+	line-height: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	transition:
+		color 0.2s,
+		border-color 0.2s,
+		background 0.2s;
+}
+
+.enter-workspace-sidebar:hover {
+	color: contrast-color(var(--workspace-color));
+	border-color: #555;
+	background: color-mix(in srgb, var(--workspace-color, #333), #000 10%);
 }
 
 .add-btn {

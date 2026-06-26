@@ -5,6 +5,25 @@ require 'includes/vite.php';
 $me          = requireLogin();
 $workspaceId = requireWorkspace($me);
 
+
+// ── Actions ────────────────────────────────────────────────────────────────────
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $action = $_POST['action'] ?? '';
+
+    if ($action === 'enter') {
+        $wsId = (int) ($_POST['workspace_id'] ?? 0);
+        $stmt = $pdo->prepare("SELECT 1 FROM workspace_members WHERE workspace_id = ? AND user_id = ?");
+        $stmt->execute([$wsId, $me['id']]);
+        if ($stmt->fetch()) {
+            $_SESSION['workspace_id'] = $wsId;
+            header('Location: index.php');
+            exit;
+        }
+    }
+    header('Location: workspaces.php');
+    exit;
+}
+
 // ── Workspace data ─────────────────────────────────────────────────────────────
 
 $wsStmt = $pdo->prepare("SELECT name FROM workspaces WHERE id = ?");
@@ -222,6 +241,17 @@ $dragIconSvg   = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
         <!-- Add column -->
         <button id="add-col-trigger" title="Add column" aria-label="Add column">+</button>
 
+
+        <!-- Workspaces cards -->
+        <div class="belong-workspaces" style="display: flex; flex-direction: column; gap: .7em; margin-block-start: 2rem">
+            <?php foreach ($workspaces as $ws): ?>
+                <form method="POST" style="display:inline">
+                    <input type="hidden" name="action" value="enter">
+                    <input type="hidden" name="workspace_id" value="<?= $ws['id'] ?>">
+                    <button title="Open <?= htmlspecialchars($ws['name']) ?> Workspace" class="enter-workspace-sidebar" aria-label="Open <?= htmlspecialchars($ws['name']) ?> Workspace" type="submit"><?= htmlspecialchars(initials($ws['name'])) ?></button>
+                </form>
+            <?php endforeach; ?>
+        </div>
         <!-- Bottom nav -->
         <nav class="sidebar-nav">
             <a href="workspaces.php" class="sidebar-nav-btn" title="Workspaces">
