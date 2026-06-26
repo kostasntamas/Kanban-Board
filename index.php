@@ -104,7 +104,64 @@ $dragIconSvg   = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
     <script>
         window.__KANBAN_COLUMNS__ = <?= json_encode(array_map(fn($k, $v) => ['key' => $k, 'label' => $v['label']], array_keys($columns), $columns)) ?>;
     </script>
+    <div data-theme-toggle>
+        <button aria-label="light">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun size-full">
+                <circle cx="12" cy="12" r="4"></circle>
+                <path d="M12 2v2"></path>
+                <path d="M12 20v2"></path>
+                <path d="m4.93 4.93 1.41 1.41"></path>
+                <path d="m17.66 17.66 1.41 1.41"></path>
+                <path d="M2 12h2"></path>
+                <path d="M20 12h2"></path>
+                <path d="m6.34 17.66-1.41 1.41"></path>
+                <path d="m19.07 4.93-1.41 1.41"></path>
+            </svg>
+        </button>
+        <button aria-label="dark">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon size-full">
+                <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
+            </svg>
+        </button>
+        <button aria-label="system">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-airplay size-full">
+                <path d="M5 17H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-1"></path>
+                <path d="m12 15 5 6H7Z"></path>
+            </svg>
+        </button>
+    </div>
+    <script>
+        const container = document.querySelector("[data-theme-toggle]");
+        const buttons = container.querySelectorAll("button");
 
+        // Load saved theme or default to system
+        setTheme(localStorage.getItem("theme") || "system");
+
+        function setTheme(theme) {
+            // Update active button
+            buttons.forEach((button) => {
+                button.classList.toggle(
+                    "active",
+                    button.getAttribute("aria-label") === theme
+                );
+            });
+
+            if (theme === "system") {
+                container.setAttribute("data-theme-toggle", "system");
+                localStorage.removeItem("theme");
+            } else {
+                container.dataset.themeToggle = theme;
+                localStorage.setItem("theme", theme);
+            }
+        }
+
+        // Handle clicks
+        buttons.forEach((button) => {
+            button.addEventListener("click", () => {
+                setTheme(button.getAttribute("aria-label"));
+            });
+        });
+    </script>
     <!-- Item dialog -->
     <dialog id="item-dialog">
         <header class="dialog-header">

@@ -52,6 +52,16 @@
 
 html {
 	color-scheme: light dark;
+	@media (prefers-color-scheme: dark) {
+		color-scheme: dark;
+	}
+
+	&:has([data-theme-toggle='light']) {
+		color-scheme: light;
+	}
+	&:has([data-theme-toggle='dark']) {
+		color-scheme: dark;
+	}
 }
 body {
 	min-height: 100dvb;
@@ -127,5 +137,52 @@ dialog,
 	[open],
 	[open]::backdrop {
 		opacity: 0;
+	}
+}
+
+/* theme-mode-toggler */
+[data-theme-toggle] {
+	position: fixed;
+	background-color: var(--bg);
+	top: 0.5rem;
+	right: 0.5rem;
+	padding: 0.4rem 0.6rem;
+	border-radius: 100vmax;
+	display: flex;
+	gap: 0.3rem;
+}
+[data-theme-toggle]::before {
+	content: '';
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	inset: 0;
+	border-radius: inherit;
+	box-shadow: var(--shadow);
+	z-index: -1;
+}
+[data-theme-toggle] > button {
+	appearance: none;
+	cursor: pointer;
+	border: none;
+	border-radius: inherit;
+	background: none;
+	color: #737373;
+	aspect-ratio: 1;
+	display: flex;
+	padding: 0.35em;
+	&:hover {
+		color: var(--text);
+	}
+	&.active {
+		background: #e0e0e0;
+		color: black;
+	}
+	svg {
+		width: 16px;
+		height: auto;
+	}
+	svg path {
+		fill: inherit;
 	}
 }
