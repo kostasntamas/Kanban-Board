@@ -101,13 +101,8 @@ $dragIconSvg   = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
 </head>
 
 <body>
-
     <script>
-        window.__KANBAN_COLUMNS__ = <?= json_encode(array_map(
-                                        fn($k, $v) => ['key' => $k, 'label' => $v['label']],
-                                        array_keys($columns),
-                                        $columns
-                                    )) ?>;
+        window.__KANBAN_COLUMNS__ = <?= json_encode(array_map(fn($k, $v) => ['key' => $k, 'label' => $v['label']], array_keys($columns), $columns)) ?>;
     </script>
 
     <!-- Item dialog -->

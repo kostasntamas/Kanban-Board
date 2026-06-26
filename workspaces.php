@@ -166,7 +166,7 @@ foreach ($workspaces as $ws) {
     <div class="page-content wrapper flow">
         <div style="display:flex;align-items:center;justify-content:space-between;">
             <h1 class="page-title">Workspaces</h1>
-            <button class="btn-primary btn-sm" onclick="newWsForm.showModal()">
+            <button class="btn-primary btn-sm" command="show-modal" commandfor="newWsForm">
                 + New workspace
             </button>
         </div>
