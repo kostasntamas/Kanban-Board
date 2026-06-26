@@ -5,7 +5,6 @@
 	align-items: center;
 	padding-block: 0.75rem;
 	background: var(--white);
-	border-right: 1px solid var(--shadow-clr-1);
 	z-index: 10;
 	gap: 0.5rem;
 	grid-area: aside;
@@ -255,9 +254,12 @@ ul .drag-item {
 	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	display: grid;
 	gap: 0.35rem;
-	grid-template-columns: 1fr auto;
-	grid-template-rows: 1fr 1fr;
-	grid-template-areas: 'content intr' 'content intr' 'budget intr';
+	grid-template-columns: auto 1fr 1fr auto;
+	grid-template-rows: auto auto auto;
+	grid-template-areas:
+		'content content content intr'
+		'content content content intr'
+		'budget attach other other';
 	transition: transform 0.25s ease;
 
 	&.dragging {
@@ -366,6 +368,11 @@ ul .drag-item {
 	gap: 0.25rem;
 	font-size: 0.75rem;
 	color: #888;
+	grid-area: attach;
+	svg {
+		width: 17px;
+		height: auto;
+	}
 }
 
 .assigned-badges {

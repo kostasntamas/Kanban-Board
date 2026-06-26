@@ -1,10 +1,7 @@
 import { apiFetch } from './api.js';
 import { openModal } from './dialog.js';
 import { dragStart, dragEnd } from './drag.js';
-
-const EDIT_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M3 21v-4.25L16.2 3.575q.3-.275.663-.425t.762-.15t.775.15t.65.45L20.425 5q.3.275.438.65T21 6.4q0 .4-.137.763t-.438.662L7.25 21zM17.6 7.8L19 6.4L17.6 5l-1.4 1.4z"/></svg>`;
-const DELETE_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zM17 6H7v13h10zM9 17h2V8H9zm4 0h2V8h-2zM7 6v13z"/></svg>`;
-const DRAG_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><path fill="currentColor" d="M9 20q-.825 0-1.412-.587T7 18t.588-1.412T9 16t1.413.588T11 18t-.587 1.413T9 20m6 0q-.825 0-1.412-.587T13 18t.588-1.412T15 16t1.413.588T17 18t-.587 1.413T15 20m-6-6q-.825 0-1.412-.587T7 12t.588-1.412T9 10t1.413.588T11 12t-.587 1.413T9 14m6 0q-.825 0-1.412-.587T13 12t.588-1.412T15 10t1.413.588T17 12t-.587 1.413T15 14M9 8q-.825 0-1.412-.587T7 6t.588-1.412T9 4t1.413.588T11 6t-.587 1.413T9 8m6 0q-.825 0-1.412-.587T13 6t.588-1.412T15 4t1.413.588T17 6t-.587 1.413T15 8"/></svg>`;
+import { ATTACHMENT_ICON_SVG, EDIT_ICON_SVG, DELETE_ICON_SVG, DRAG_ICON_SVG } from './icons.js';
 
 export const updateAssignedBadges = (card, assignees) => {
 	let container = card.querySelector('.assigned-badges');
@@ -36,7 +33,7 @@ export const updateAttachmentBadge = (card, count) => {
 			badge.className = 'item-attachment-badge';
 			card.querySelector('.interactions').before(badge);
 		}
-		badge.innerHTML = `<span>📎</span> ${count}`;
+		badge.innerHTML = `<span style="rotate: 90deg;">${ATTACHMENT_ICON_SVG}</span> ${count}`;
 	} else if (badge) {
 		badge.remove();
 	}
@@ -72,7 +69,7 @@ export const createItemEl = (id, content, attachCount, assignees = []) => {
 	if (attachCount > 0) {
 		const badge = document.createElement('div');
 		badge.className = 'item-attachment-badge';
-		badge.innerHTML = `<span>📎</span> ${attachCount}`;
+		badge.innerHTML = `<span style="rotate: 90deg;">${ATTACHMENT_ICON_SVG}</span> ${attachCount}`;
 		li.appendChild(badge);
 	}
 

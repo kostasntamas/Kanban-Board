@@ -3,6 +3,7 @@ import 'quill/dist/quill.snow.css';
 import { apiFetch } from './api.js';
 import { createItemEl, updateAttachmentBadge, updateAssignedBadges } from './dom.js';
 import { saveOrder } from './drag.js';
+import { ATTACHMENT_ICON_SVG, ZIP_ICON_SVG, PDF_ICON_SVG, DOCS_ICON_SVG, SHEET_ICON_SVG } from './icons.js';
 
 let quill = null;
 let modalMode = null;
@@ -258,12 +259,12 @@ const handleFiles = (files) => {
 };
 
 const fileIcon = (mimeType) => {
-	if (mimeType === 'application/pdf') return '📄';
-	if (mimeType.includes('word')) return '📝';
-	if (mimeType.includes('sheet') || mimeType.includes('excel')) return '📊';
-	if (mimeType.includes('zip') || mimeType.includes('compressed')) return '🗜️';
+	if (mimeType === 'application/pdf') return `${PDF_ICON_SVG}`;
+	if (mimeType.includes('word')) return `${DOCS_ICON_SVG}`;
+	if (mimeType.includes('sheet') || mimeType.includes('excel')) return `${SHEET_ICON_SVG}`;
+	if (mimeType.includes('zip') || mimeType.includes('compressed')) return `${ZIP_ICON_SVG}`;
 	if (mimeType.startsWith('text/')) return '📃';
-	return '📎';
+	return `${ATTACHMENT_ICON_SVG}`;
 };
 
 const makeAttachmentEl = (name, mimeType, thumbUrl, onRemove) => {
@@ -278,7 +279,7 @@ const makeAttachmentEl = (name, mimeType, thumbUrl, onRemove) => {
 	} else {
 		const icon = document.createElement('span');
 		icon.className = 'attachment-icon';
-		icon.textContent = fileIcon(mimeType);
+		icon.innerHTML = fileIcon(mimeType);
 		div.appendChild(icon);
 	}
 
