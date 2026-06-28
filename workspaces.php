@@ -10,14 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
 
     if ($action === 'enter') {
-        $wsId = (int) ($_POST['workspace_id'] ?? 0);
-        $stmt = $pdo->prepare("SELECT 1 FROM workspace_members WHERE workspace_id = ? AND user_id = ?");
-        $stmt->execute([$wsId, $me['id']]);
-        if ($stmt->fetch()) {
-            $_SESSION['workspace_id'] = $wsId;
-            header('Location: index.php');
-            exit;
-        }
+        handleEnterWorkspace($me);
     }
 
     if ($action === 'create') {
@@ -100,31 +93,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // ── Data ───────────────────────────────────────────────────────────────────────
 
-$stmt = $pdo->prepare("
-    SELECT w.id, w.name, wm.role,
-           (SELECT COUNT(*) FROM workspace_members WHERE workspace_id = w.id) AS member_count
-    FROM workspaces w
-    JOIN workspace_members wm ON wm.workspace_id = w.id AND wm.user_id = ?
-    ORDER BY w.created_at ASC
-");
-$stmt->execute([$me['id']]);
-$workspaces = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Members per workspace (for owners)
-$membersByWs = [];
-foreach ($workspaces as $ws) {
-    if ($ws['role'] === 'owner' || $me['is_admin']) {
-        $stmt = $pdo->prepare("
-            SELECT u.id, u.name, u.email, wm.role
-            FROM workspace_members wm
-            JOIN users u ON u.id = wm.user_id
-            WHERE wm.workspace_id = ?
-            ORDER BY wm.role DESC, u.name ASC
-        ");
-        $stmt->execute([$ws['id']]);
-        $membersByWs[$ws['id']] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-}
+$workspaces  = getUserWorkspaces($me);
+$membersByWs = getWorkspaceMembers($workspaces, $me);
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -124,7 +124,7 @@ a.sidebar-nav-btn.logout::after {
 	cursor: grab;
 	padding: 0.2em;
 	border-radius: var(--radius-4);
-	color: #ccc;
+	color: var(--quill-border);
 	transition:
 		color 0.15s,
 		background 0.15s;
@@ -157,7 +157,7 @@ a.sidebar-nav-btn.logout::after {
 	font-size: 1rem;
 	padding: 0.2em 0.4em;
 	border-radius: var(--radius-4);
-	color: #ccc;
+	color: var(--quill-border);
 	transition:
 		color 0.15s,
 		background 0.15s;
@@ -169,7 +169,7 @@ a.sidebar-nav-btn.logout::after {
 
 .wrapper--add-col {
 	border-style: dashed;
-	border-color: #ccc;
+	border-color: var(--quill-border);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -178,6 +178,7 @@ a.sidebar-nav-btn.logout::after {
 #add-col-trigger {
 	width: 36px;
 	height: 36px;
+	aspect-ratio: 1;
 	border-radius: 50%;
 	border: 2px dashed #bbb;
 	background: none;
@@ -199,8 +200,21 @@ a.sidebar-nav-btn.logout::after {
 	border-color: #555;
 	background: #f5f5f5;
 }
+.belong-workspaces {
+	overflow-y: scroll;
+	display: flex;
+	flex-direction: column;
+	gap: 0.7em;
+	margin-block-start: 2rem;
+	width: 100%;
+	align-items: center;
+	&::-webkit-scrollbar {
+		width: 2px;
+		height: var(--sb-height);
+	}
+}
+
 .enter-workspace-sidebar {
-	/* --workspace-color: var(lightpink, gray); */
 	--workspace-color: lightpink;
 	width: 36px;
 	height: 36px;
@@ -282,18 +296,12 @@ ul .drag-item {
 	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	display: grid;
 	gap: 0.35rem;
-<<<<<<< HEAD
-	grid-template-columns: 1fr auto;
-	grid-template-rows: 1fr 1fr;
-	grid-template-areas: 'content intr' 'content intr' 'budget intr';
-=======
 	grid-template-columns: auto 1fr 1fr auto;
 	grid-template-rows: auto auto auto;
 	grid-template-areas:
 		'content content content intr'
 		'content content content intr'
 		'budget attach other other';
->>>>>>> 7a9ee9f4cdc34887e1058107e03c7882fc36688b
 	transition: transform 0.25s ease;
 
 	&.dragging {
@@ -374,7 +382,7 @@ ul .drag-item {
 		margin: 0 0 0.3em;
 	}
 	blockquote {
-		border-left: 3px solid #ccc;
+		border-left: 3px solid var(--quill-border);
 		padding-left: 0.6em;
 		color: #666;
 		margin: 0 0 0.3em;
@@ -434,7 +442,7 @@ ul .drag-item {
 	margin-left: auto;
 	margin-right: 0.5rem;
 	padding: 0.3rem 0.5rem;
-	border: 1px solid #d0d0d0;
+	border: 1px solid var(--input);
 	border-radius: var(--radius-4);
 	font-size: 0.82rem;
 	font-family: inherit;
@@ -466,7 +474,7 @@ ul .drag-item {
 	align-items: center;
 	gap: 4px;
 	padding: 0.35rem 0.5rem;
-	border: 1px solid #d0d0d0;
+	border: 1px solid var(--input);
 	border-radius: var(--radius-4);
 	background: var(--white);
 	cursor: text;
@@ -538,7 +546,7 @@ ul .drag-item {
 	right: 0;
 	z-index: 100;
 	background: var(--white);
-	border: 1px solid #d0d0d0;
+	border: 1px solid var(--input);
 	border-radius: var(--radius-4);
 	margin-top: 4px;
 	max-height: 180px;
@@ -590,8 +598,7 @@ ul .drag-item {
 	align-items: center;
 	justify-content: space-between;
 	padding: 1rem 1.5rem;
-	border-bottom: 1px solid #eee;
-	flex-shrink: 0;
+	border-bottom: 1px solid var(--border);
 }
 
 .dialog-header h3 {
@@ -627,16 +634,20 @@ ul .drag-item {
 	grid-template-areas: 'editor editor tool' 'editor editor tool' 'editor editor tool';
 }
 .editor-area {
-	grid-area: editor 
+	grid-area: editor;
 }
 .tool-area {
-	grid-area: tool 
+	grid-area: tool;
 }
 #quill-editor {
 	display: flex;
 	flex-direction: column;
-	border: 1px solid #ccc;
+	border: 1px solid var(--quill-border);
 	border-radius: 4px;
+}
+
+.ql-editor.ql-editor.ql-blank::before {
+    color: var(--text);
 }
 #quill-editor .ql-toolbar.ql-snow {
 	border: none;
@@ -672,7 +683,7 @@ ul .drag-item {
 }
 
 .file-drop-zone {
-	border: 2px dashed #ccc;
+	border: 2px dashed var(--quill-border);
 	border-radius: 6px;
 	padding: 0.75rem 1rem;
 	text-align: center;
@@ -753,7 +764,7 @@ ul .drag-item {
 	justify-content: flex-end;
 	gap: 0.5rem;
 	padding: 1rem 1.5rem;
-	border-top: 1px solid #eee;
+	border-top: 1px solid var(--border);
 	flex-shrink: 0;
 }
 
@@ -778,7 +789,7 @@ ul .drag-item {
 	width: 100%;
 	padding: 0.5rem 0.7rem;
 	font-size: 0.95rem;
-	border: 1px solid #ccc;
+	border: 1px solid var(--quill-border);
 	border-radius: var(--radius-4);
 	outline: none;
 	font-family: inherit;
@@ -804,14 +815,14 @@ ul .drag-item {
 	transition: background 0.15s;
 }
 .btn-cancel {
-	background: #f0f0f0;
-	color: #444;
+	background: var(--btn-secondary);
+	color: var(--text);
 }
 .btn-cancel:hover {
-	background: #e4e4e4;
+	background: var(--btn-secondary);
 }
 .btn-save {
-	background: #1a1a1a;
+	background: var(--btn-primary);
 	color: var(--white);
 }
 .btn-save:hover {

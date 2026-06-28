@@ -86,6 +86,55 @@ function apiWorkspace(array $user): int
     return (int) $_SESSION['workspace_id'];
 }
 
+// ── Workspace actions ─────────────────────────────────────────────────────
+
+function handleEnterWorkspace(array $user): void
+{
+    global $pdo;
+    $wsId = (int) ($_POST['workspace_id'] ?? 0);
+    $stmt = $pdo->prepare("SELECT 1 FROM workspace_members WHERE workspace_id = ? AND user_id = ?");
+    $stmt->execute([$wsId, $user['id']]);
+    if ($stmt->fetch()) {
+        $_SESSION['workspace_id'] = $wsId;
+        header('Location: index.php');
+        exit;
+    }
+}
+
+function getUserWorkspaces(array $user): array
+{
+    global $pdo;
+    $stmt = $pdo->prepare("
+        SELECT w.id, w.name, wm.role,
+               (SELECT COUNT(*) FROM workspace_members WHERE workspace_id = w.id) AS member_count
+        FROM workspaces w
+        JOIN workspace_members wm ON wm.workspace_id = w.id AND wm.user_id = ?
+        ORDER BY w.created_at ASC
+    ");
+    $stmt->execute([$user['id']]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getWorkspaceMembers(array $workspaces, array $user): array
+{
+    global $pdo;
+    $membersByWs = [];
+    foreach ($workspaces as $ws) {
+        if ($ws['role'] === 'owner' || $user['is_admin']) {
+            $stmt = $pdo->prepare("
+                SELECT u.id, u.name, u.email, wm.role
+                FROM workspace_members wm
+                JOIN users u ON u.id = wm.user_id
+                WHERE wm.workspace_id = ?
+                ORDER BY wm.role DESC, u.name ASC
+            ");
+            $stmt->execute([$ws['id']]);
+            $membersByWs[$ws['id']] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+    }
+    return $membersByWs;
+}
+
 // ── Utility ───────────────────────────────────────────────────────────────────
 
 function initials(string $name): string

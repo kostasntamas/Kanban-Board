@@ -5,7 +5,7 @@
 }
 
 :root {
-		transition-behavior: allow-discrete;
+	transition-behavior: allow-discrete;
 	--sb-track-color: #e6e6e6;
 	--sb-thumb-color: #aaa;
 	--sb-width: 5px;
@@ -18,20 +18,20 @@
 	--list-height: calc(var(--height) / var(--count) + 1rem);
 
 	/* color */
-<<<<<<< HEAD
-	--white: #fafafa;
-	--offwhite: #F5F5F5;
-=======
-	--text: light-dark(#3a3a3a, #dbd9d9);
-	--btn: light-dark(#f5f5f5, #2b2a2a);
-	--white: light-dark(#fafafa, #0a0a0a);
+	--quill-border: light-dark(#ccc,#474747);
+	--input: light-dark(#d0d0d0,#3a3a3a);
+	--border: light-dark(#eee,#3a3a3a);
+	--text: light-dark(#3a3a3a, #c4c4c4);
+	--btn: light-dark(#f5f5f5, #0a0a0a);
+	--btn-primary: light-dark(#1a1a1a, #e6e6e6);
+	--btn-secondary: light-dark(#f0f0f0, #0f0f0f);
+	--white: light-dark(#fafafa, #050505);
 	--offwhite: light-dark(#fbfbfb, #0b0b0b);
-	--shadow-clr-1: light-dark(rgba(0, 0, 0, 0.051), rgba(255, 255, 255, 0.04));
-	--shadow-clr-2: light-dark(rgba(0, 0, 0, 0.078), rgba(255, 255, 255, 0.051));
->>>>>>> 7a9ee9f4cdc34887e1058107e03c7882fc36688b
+	--shadow-clr-1: light-dark(#0000000d, #ffffff0a);
+	--shadow-clr-2: light-dark(#00000014, #ffffff0d);
 
 	--shadow: var(--shadow-clr-1) 0px 6px 24px 0px, var(--shadow-clr-2) 0px 0px 0px 1px;
-	--dot: light-dark(#00000059, #ffffff4d);
+	--dot: light-dark(#00000059, #ffffff);
 	--bg: light-dark(var(--white), #131313);
 }
 
@@ -104,34 +104,7 @@ body:has(aside#sidebar) {
 }
 
 .shadow {
-<<<<<<< HEAD
-	box-shadow:
-		rgba(0, 0, 0, 0.05) 0px 6px 24px 0px,
-		rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
-}
-
-body {
-	min-height: 100dvb;
-	line-height: 1;
-	font-family:
-		system-ui,
-		-apple-system,
-		BlinkMacSystemFont,
-		'Segoe UI',
-		sans-serif;
-	display: grid;
-	grid-template-rows: auto 1fr;
-	background-image: radial-gradient(rgba(0, 0, 0, 0.35) 0.7px, var(--offwhite) 0);
-	background-size: 15px 15px;
-	background-position: -20px -20px;
-	&:has(aside#sidebar) {
-		grid-template-columns: auto 1fr;
-		grid-template-rows: auto 1fr;
-		grid-template-areas: 'aside header header' 'aside main main' 'aside main main';
-	}
-=======
 	box-shadow: var(--shadow);
->>>>>>> 7a9ee9f4cdc34887e1058107e03c7882fc36688b
 }
 
 /* ── <dialog> shared ─────────────────────────────────────────────────────────── */

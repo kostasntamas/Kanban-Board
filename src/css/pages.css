@@ -318,7 +318,7 @@ a.logout::after {
 }
 
 .members-panel {
-	border-top: 1px solid #eee;
+	border-top: 1px solid var(--border);
 	padding-top: 0.75rem;
 	margin-top: 0.25rem;
 	display: flex;

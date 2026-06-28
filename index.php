@@ -7,19 +7,8 @@ $workspaceId = requireWorkspace($me);
 
 
 // ── Actions ────────────────────────────────────────────────────────────────────
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = $_POST['action'] ?? '';
-
-    if ($action === 'enter') {
-        $wsId = (int) ($_POST['workspace_id'] ?? 0);
-        $stmt = $pdo->prepare("SELECT 1 FROM workspace_members WHERE workspace_id = ? AND user_id = ?");
-        $stmt->execute([$wsId, $me['id']]);
-        if ($stmt->fetch()) {
-            $_SESSION['workspace_id'] = $wsId;
-            header('Location: index.php');
-            exit;
-        }
-    }
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'enter') {
+    handleEnterWorkspace($me);
     header('Location: workspaces.php');
     exit;
 }
@@ -78,31 +67,8 @@ foreach ($allItems as $row) {
 }
 
 
-$stmt = $pdo->prepare("
-    SELECT w.id, w.name, wm.role,
-           (SELECT COUNT(*) FROM workspace_members WHERE workspace_id = w.id) AS member_count
-    FROM workspaces w
-    JOIN workspace_members wm ON wm.workspace_id = w.id AND wm.user_id = ?
-    ORDER BY w.created_at ASC
-");
-$stmt->execute([$me['id']]);
-$workspaces = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Members per workspace (for owners)
-$membersByWs = [];
-foreach ($workspaces as $ws) {
-    if ($ws['role'] === 'owner' || $me['is_admin']) {
-        $stmt = $pdo->prepare("
-            SELECT u.id, u.name, u.email, wm.role
-            FROM workspace_members wm
-            JOIN users u ON u.id = wm.user_id
-            WHERE wm.workspace_id = ?
-            ORDER BY wm.role DESC, u.name ASC
-        ");
-        $stmt->execute([$ws['id']]);
-        $membersByWs[$ws['id']] = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-}
+$workspaces  = getUserWorkspaces($me);
+$membersByWs = getWorkspaceMembers($workspaces, $me);
 
 
 $attachmentIconSvg   = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"><!-- Icon from Material Symbols by Google - https://github.com/google/material-design-icons/blob/master/LICENSE --><path fill="currentColor" d="M8.25 18q-2.6 0-4.425-1.825T2 11.75t1.825-4.425T8.25 5.5h9.25q1.875 0 3.188 1.313T22 10t-1.312 3.188T17.5 14.5H8.75q-1.15 0-1.95-.8T6 11.75t.8-1.95T8.75 9H18v2H8.75q-.325 0-.537.213T8 11.75t.213.538t.537.212h8.75q1.05-.025 1.775-.737T20 10t-.725-1.775T17.5 7.5H8.25q-1.775-.025-3.012 1.225T4 11.75q0 1.75 1.238 2.975T8.25 16H18v2z"/></svg>';
@@ -247,7 +213,7 @@ $dragIconSvg   = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
 
 
         <!-- Workspaces cards -->
-        <div class="belong-workspaces" style="display: flex; flex-direction: column; gap: .7em; margin-block-start: 2rem">
+        <div class="belong-workspaces">
             <?php foreach ($workspaces as $ws): ?>
                 <form method="POST" style="display:inline">
                     <input type="hidden" name="action" value="enter">
