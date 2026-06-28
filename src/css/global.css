@@ -5,6 +5,7 @@
 }
 
 :root {
+		transition-behavior: allow-discrete;
 	--sb-track-color: #e6e6e6;
 	--sb-thumb-color: #aaa;
 	--sb-width: 5px;
@@ -20,7 +21,7 @@
 
 	/* color */
 	--white: #fafafa;
-	--offwhite: #fbfbfb;
+	--offwhite: #F5F5F5;
 
 }
 
@@ -64,7 +65,7 @@
 
 body {
 	min-height: 100dvb;
-	/* background-color: red; */
+	line-height: 1;
 	font-family:
 		system-ui,
 		-apple-system,
@@ -73,14 +74,13 @@ body {
 		sans-serif;
 	display: grid;
 	grid-template-rows: auto 1fr;
-	background-image: radial-gradient(rgba(0, 0, 0, 0.35) 0.7px, var(--white) 0);
+	background-image: radial-gradient(rgba(0, 0, 0, 0.35) 0.7px, var(--offwhite) 0);
 	background-size: 15px 15px;
 	background-position: -20px -20px;
 	&:has(aside#sidebar) {
 		grid-template-columns: auto 1fr;
 		grid-template-rows: auto 1fr;
 		grid-template-areas: 'aside header header' 'aside main main' 'aside main main';
-		/* grid-template-columns: auto 1fr; */
 	}
 }
 

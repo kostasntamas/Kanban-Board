@@ -118,26 +118,30 @@ $dragIconSvg   = '<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"
             <button id="modal-close" class="modal-close-btn" aria-label="Close">&times;</button>
         </header>
         <div class="dialog-body">
-            <div id="quill-editor"></div>
-            <div class="assign-section">
-                <p class="attachments-label">Assignees</p>
-                <div class="multiselect" id="assign-multiselect">
-                    <div class="multiselect-control" id="assign-control">
-                        <div class="multiselect-chips" id="assign-chips"></div>
-                        <input type="text" class="multiselect-search" id="assign-search"
-                            placeholder="Add assignee..." autocomplete="off">
-                    </div>
-                    <div class="multiselect-dropdown hidden" id="assign-dropdown"></div>
-                </div>
+            <div class="editor-area">
+                <div id="quill-editor"></div>
             </div>
-            <div class="attachments-section">
-                <p class="attachments-label">Attachments</p>
-                <div class="file-drop-zone" id="file-drop-zone">
-                    <input type="file" id="file-input" multiple
-                        accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip">
-                    <span>Drop files here or <label for="file-input" class="file-label">browse</label></span>
+            <div class="tool-area flow">
+                <div class="assign-section">
+                    <p class="attachments-label">Assignees</p>
+                    <div class="multiselect" id="assign-multiselect">
+                        <div class="multiselect-control" id="assign-control">
+                            <div class="multiselect-chips" id="assign-chips"></div>
+                            <input type="text" class="multiselect-search" id="assign-search"
+                                placeholder="Add assignee..." autocomplete="off">
+                        </div>
+                        <div class="multiselect-dropdown hidden" id="assign-dropdown"></div>
+                    </div>
                 </div>
-                <div id="attachments-list" class="attachments-list"></div>
+                <div class="attachments-section">
+                    <p class="attachments-label">Attachments</p>
+                    <div class="file-drop-zone" id="file-drop-zone">
+                        <input type="file" id="file-input" multiple
+                            accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.txt,.zip">
+                        <span>Drop files here or <label for="file-input" class="file-label">browse</label></span>
+                    </div>
+                    <div id="attachments-list" class="attachments-list"></div>
+                </div>
             </div>
         </div>
         <footer class="dialog-footer">
