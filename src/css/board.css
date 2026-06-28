@@ -4,8 +4,7 @@
 	flex-direction: column;
 	align-items: center;
 	padding-block: 0.75rem;
-	background: rgb(250, 250, 250);
-	border-right: 1px solid #e0e0e0;
+	background: var(--white);
 	z-index: 10;
 	gap: 0.5rem;
 	grid-area: aside;
@@ -40,10 +39,10 @@
 	width: 34px;
 	height: 34px;
 	border-radius: var(--radius-4);
-	color: #3a3a3a;
+	color: var(--text);
 	text-decoration: none;
 	transition:
-		background 0.15s,
+		background-color 0.15s,
 		color 0.15s;
 }
 
@@ -52,13 +51,13 @@
 }
 
 .sidebar-nav-btn:hover {
-	color: #999;
-	background: #f5f5f5;
+	color: var(--text);
+	background-color: var(--btn);
 }
 
 a.sidebar-nav-btn.logout {
 	position: relative;
-	color: #999;
+	color: var(--text);
 }
 a.sidebar-nav-btn.logout::after {
 	content: '';
@@ -66,7 +65,7 @@ a.sidebar-nav-btn.logout::after {
 	height: 1px;
 	top: -0.5rem;
 	left: 50%;
-	background: #00000033;
+	background: var(--dot);
 	position: absolute;
 	translate: -50% -50%;
 }
@@ -90,10 +89,9 @@ a.sidebar-nav-btn.logout::after {
 
 .container {
 	border-radius: var(--radius-4);
-	max-height: var(--height);
+	max-height: min(100%, var(--height));
 	margin-block: auto;
 	height: 100%;
-	/* overflow: hidden; */
 	background: var(--white);
 
 	.add-form {
@@ -195,10 +193,39 @@ a.sidebar-nav-btn.logout::after {
 		border-color 0.2s,
 		background 0.2s;
 }
+
 #add-col-trigger:hover {
 	color: #333;
 	border-color: #555;
 	background: #f5f5f5;
+}
+.enter-workspace-sidebar {
+	/* --workspace-color: var(lightpink, gray); */
+	--workspace-color: lightpink;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	color: contrast-color(var(--workspace-color));
+	border: 1px solid var(--workspace-color);
+	background: var(--workspace-color);
+	cursor: pointer;
+	font-size: 0.65rem;
+	font-weight: bold;
+	line-height: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0;
+	transition:
+		color 0.2s,
+		border-color 0.2s,
+		background 0.2s;
+}
+
+.enter-workspace-sidebar:hover {
+	color: contrast-color(var(--workspace-color));
+	border-color: #555;
+	background: color-mix(in srgb, var(--workspace-color, #333), #000 10%);
 }
 
 .add-btn {
@@ -255,9 +282,18 @@ ul .drag-item {
 	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 	display: grid;
 	gap: 0.35rem;
+<<<<<<< HEAD
 	grid-template-columns: 1fr auto;
 	grid-template-rows: 1fr 1fr;
 	grid-template-areas: 'content intr' 'content intr' 'budget intr';
+=======
+	grid-template-columns: auto 1fr 1fr auto;
+	grid-template-rows: auto auto auto;
+	grid-template-areas:
+		'content content content intr'
+		'content content content intr'
+		'budget attach other other';
+>>>>>>> 7a9ee9f4cdc34887e1058107e03c7882fc36688b
 	transition: transform 0.25s ease;
 
 	&.dragging {
@@ -365,6 +401,11 @@ ul .drag-item {
 	gap: 0.25rem;
 	font-size: 0.75rem;
 	color: #888;
+	grid-area: attach;
+	svg {
+		width: 17px;
+		height: auto;
+	}
 }
 
 .assigned-badges {
